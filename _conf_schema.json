@@ -138,7 +138,11 @@
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
                         "type": "int",
-                        "slider": {"min": 1, "max": 99, "step": 1},
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
                         "default": 1
                     },
                     "enable": {
@@ -151,7 +155,9 @@
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
                         "type": "list",
-                        "default": ["网易点歌"]
+                        "default": [
+                            "网易点歌"
+                        ]
                     },
                     "cookies": {
                         "description": "Cookies",
@@ -189,7 +195,11 @@
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
                         "type": "int",
-                        "slider": {"min": 1, "max": 99, "step": 1},
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
                         "default": 2
                     },
                     "enable": {
@@ -202,7 +212,9 @@
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
                         "type": "list",
-                        "default": ["NJ点歌"]
+                        "default": [
+                            "NJ点歌"
+                        ]
                     },
                     "base_url": {
                         "description": "API 根地址",
@@ -232,7 +244,11 @@
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
                         "type": "int",
-                        "slider": {"min": 1, "max": 99, "step": 1},
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
                         "default": 3
                     },
                     "enable": {
@@ -245,7 +261,9 @@
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
                         "type": "list",
-                        "default": ["QQ点歌"]
+                        "default": [
+                            "QQ点歌"
+                        ]
                     },
                     "uin": {
                         "description": "绑定 QQ 号（UIN）",
@@ -274,7 +292,11 @@
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
                         "type": "int",
-                        "slider": {"min": 1, "max": 99, "step": 1},
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
                         "default": 4
                     },
                     "enable": {
@@ -361,7 +383,11 @@
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
                         "type": "int",
-                        "slider": {"min": 1, "max": 99, "step": 1},
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
                         "default": 5
                     },
                     "enable": {
@@ -374,7 +400,9 @@
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
                         "type": "list",
-                        "default": ["Neko点歌"]
+                        "default": [
+                            "Neko点歌"
+                        ]
                     },
                     "base_url": {
                         "description": "API 根地址",
@@ -397,7 +425,11 @@
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
                         "type": "int",
-                        "slider": {"min": 1, "max": 99, "step": 1},
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
                         "default": 6
                     },
                     "enable": {
