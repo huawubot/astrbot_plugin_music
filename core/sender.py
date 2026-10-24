@@ -681,7 +681,7 @@ class MusicSender:
         player: BaseMusicPlayer,
         song: Song,
         modes: list[str] | None = None,
-    ) -> bool:
+    ) -> tuple[bool, bool]:
         target_modes = modes if modes is not None else self.cfg.real_send_modes
         needs_audio = any(m not in ("card", "text") for m in target_modes)
 
@@ -695,7 +695,7 @@ class MusicSender:
             and target_modes[0] != "card"
         ):
             await event.send(event.plain_result(f"【{song.name}】音频获取失败"))
-            return False
+            return False, False
 
         logger.debug(
             f"{event.get_sender_name()}（{event.get_sender_id()}）点歌："
@@ -729,16 +729,17 @@ class MusicSender:
 
         if not sent:
             await event.send(event.plain_result("歌曲发送失败"))
-            return False
+            return False, False
 
         self.clear_selection_context(event)
         if self.cfg.search_config.recall_select:
             await self._recall_selection_message(event)
 
+        comment_sent = False
         if self.cfg.send_config.enable_comments:
-            await self.send_comment(event, player, song)
+            comment_sent = await self.send_comment(event, player, song)
 
         if self.cfg.send_config.enable_lyrics:
             await self.send_lyrics(event, player, song)
 
-        return True
+        return True, comment_sent
