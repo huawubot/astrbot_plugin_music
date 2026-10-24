@@ -19,6 +19,7 @@
       "NJ点歌"
     ],
     "base_url": "https://zm.wwoyun.cn",
+    "api_token": "",
     "cookies": "",
     "proxy": ""
   },

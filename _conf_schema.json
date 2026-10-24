@@ -222,6 +222,12 @@
                         "type": "string",
                         "default": "https://zm.wwoyun.cn"
                     },
+                    "api_token": {
+                        "description": "API 访问密钥",
+                        "hint": "API 的 Bearer 鉴权；公共 API 请留空。",
+                        "type": "string",
+                        "default": ""
+                    },
                     "cookies": {
                         "description": "Cookies",
                         "hint": "预留的登录态配置；当前 NodeJS API 实现暂不读取此字段。",

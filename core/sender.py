@@ -538,6 +538,11 @@ class MusicSender:
         if not song.audio_url:
             return False
         try:
+            if isinstance(event, AiocqhttpMessageEvent):
+                payloads = {
+                    "message": [{"type": "record", "data": {"file": song.audio_url}}]
+                }
+                return await self.send_msg(event, payloads) is not None
             seg = Record.fromURL(song.audio_url)
             await event.send(event.chain_result([seg]))
             return True
@@ -557,6 +562,17 @@ class MusicSender:
             return False
 
         try:
+            if isinstance(event, AiocqhttpMessageEvent):
+                # OneBot must be able to access this path, such as through a shared mount.
+                payloads = {
+                    "message": [
+                        {
+                            "type": "record",
+                            "data": {"file": file_path.resolve().as_uri()},
+                        }
+                    ]
+                }
+                return await self.send_msg(event, payloads) is not None
             seg = Record.fromFileSystem(str(file_path.resolve()))
             await event.send(event.chain_result([seg]))
             return True
@@ -730,6 +746,12 @@ class MusicSender:
         if not sent:
             await event.send(event.plain_result("歌曲发送失败"))
             return False, False
+
+        if player.platform.name == "netease_nodejs" and song.note:
+            try:
+                await event.send(event.plain_result(f"【{song.name}】{song.note}"))
+            except Exception as exc:
+                logger.warning(f"歌曲已发出，但来源提示发送失败: {exc}")
 
         self.clear_selection_context(event)
         if self.cfg.search_config.recall_select:

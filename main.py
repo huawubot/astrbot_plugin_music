@@ -257,6 +257,7 @@ class MusicPlugin(Star):
         song_name: str,
         platform: str = "",
         artist: str = "",
+        send_mode: str = "",
     ):
         """当用户想听歌时，根据歌名（可含歌手）搜索并播放音乐。
 
@@ -264,7 +265,30 @@ class MusicPlugin(Star):
             song_name(string): 歌曲名称或包含歌手的关键词
             platform(string): 音源标识或显示名称，例如 netease、netease_nodejs、qqmusic、txqq、neko、apple_music。指定后仅使用该音源；留空时按音源优先级回退。
             artist(string): 可选的指定歌手。填写后只接受歌手匹配的结果。
+            send_mode(string): 可选的本次发送方式，支持 voice、record_link、ark_card、card、file_local、file_link、text；留空或 auto 时使用后台默认顺序。
         """
+        requested_mode = send_mode.strip().lower()
+        send_modes = None
+        if requested_mode and requested_mode != "auto":
+            mode_map = {
+                "voice": ["record_local", "record_link"],
+                "record": ["record_local", "record_link"],
+                "record_local": ["record_local", "record_link"],
+                "record_link": ["record_link"],
+                "ark_card": ["ark_card"],
+                "card": ["card"],
+                "file": ["file_local", "file_link"],
+                "file_local": ["file_local", "file_link"],
+                "file_link": ["file_link"],
+                "text": ["text"],
+            }
+            send_modes = mode_map.get(requested_mode)
+            if send_modes is None:
+                return (
+                    "未知发送方式，请使用 voice、record_link、ark_card、card、"
+                    "file_local、file_link 或 text"
+                )
+
         requested_platform = platform.strip()
         if requested_platform:
             selected_player = self.get_player(name=requested_platform)
@@ -303,7 +327,7 @@ class MusicPlugin(Star):
 
         platform_name = f"{selected_player.platform.display_name}（{selected_player.platform.name}）"
         sent, comment_sent = await self.sender.send_song(
-            event, selected_player, selected_song
+            event, selected_player, selected_song, modes=send_modes
         )
         if not sent:
             return f"音源「{platform_name}」发送《{selected_song.name}》失败"

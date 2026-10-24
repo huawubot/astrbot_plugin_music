@@ -15,6 +15,7 @@ from astrbot.core.utils.astrbot_path import (
     get_astrbot_temp_path,
 )
 
+
 class ConfigNode:
     _SCHEMA_CACHE: dict[type, dict[str, type]] = {}
     _FIELDS_CACHE: dict[type, set[str]] = {}
@@ -134,6 +135,7 @@ class MusicPlayerItem(ConfigNode):
     trigger_words: list[str]
     default_sub_source: str | None
     base_url: str | None
+    api_token: str | None
     region: str | None
     uin: str | None
     cookies: str | None
