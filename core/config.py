@@ -15,7 +15,6 @@ from astrbot.core.utils.astrbot_path import (
     get_astrbot_temp_path,
 )
 
-
 class ConfigNode:
     _SCHEMA_CACHE: dict[type, dict[str, type]] = {}
     _FIELDS_CACHE: dict[type, set[str]] = {}
@@ -131,6 +130,7 @@ class MusicPlayerItem(ConfigNode):
 
     __template_key: str
     enable: bool
+    priority: int
     trigger_words: list[str]
     default_sub_source: str | None
     base_url: str | None
@@ -151,9 +151,9 @@ class MusicPlayerConfig(ConfigNodeContainer):
 
     netease: MusicPlayerItem
     netease_nodejs: MusicPlayerItem
-    neko: MusicPlayerItem
     qqmusic: MusicPlayerItem
     txqq: MusicPlayerItem
+    neko: MusicPlayerItem
     apple_music: MusicPlayerItem
 
     def __init__(self, nodes: list[dict[str, Any]]):
@@ -167,7 +167,6 @@ class MusicPlayerConfig(ConfigNodeContainer):
 
 
 class SearchConfig(ConfigNode):
-    default_source: str
     song_limit: int
     select_modes: list[str]
     cards_per_row: int
@@ -213,6 +212,7 @@ class PluginConfig(ConfigNode):
                 self.save_config()
             except Exception as exc:
                 logger.error(f"[music] failed to load platform template: {exc}")
+
         self._players = MusicPlayerConfig(self.players_template)
 
     @property

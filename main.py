@@ -46,7 +46,7 @@ class MusicPlugin(Star):
         self, name: str | None = None, word: str | None = None, default: bool = False
     ) -> BaseMusicPlayer | None:
         if default:
-            name = self.cfg.search_config.default_source
+            return next(iter(self.get_players_by_priority()), None)
         for player in self.players:
             if name:
                 name_ = name.strip().lower()
@@ -57,6 +57,14 @@ class MusicPlugin(Star):
                 route = self.trigger_routes.get(word.strip().lower())
                 if route:
                     return route[0]
+
+    def get_players_by_priority(self) -> list[BaseMusicPlayer]:
+        """Return configured players in fallback order.
+
+        Returns:
+            Enabled players sorted by configured priority.
+        """
+        return sorted(self.players, key=lambda player: player.platform_cfg.priority)
 
     def _register_player(self):
         """注册音乐播放器"""
@@ -78,6 +86,10 @@ class MusicPlugin(Star):
                     source.strip() if separator and source.strip() else None,
                 )
                 self.keywords.append(command)
+        platform_order = {
+            name: index for index, name in enumerate(self.cfg.players.platforms())
+        }
+        self.players.sort(key=lambda player: platform_order[player.platform.name])
         logger.debug(f"已注册触发词：{self.keywords}")
 
     @filter.command("点歌")
@@ -95,13 +107,18 @@ class MusicPlugin(Star):
             return
         if not event.is_at_or_wake_command and cmd.lower() not in self.keywords:
             return
-        route = self.trigger_routes.get(cmd.lower())
+        is_generic_search = cmd.lower() == "点歌"
+        route = None if is_generic_search else self.trigger_routes.get(cmd.lower())
         player = route[0] if route else None
         source = route[1] if route else None
-        if cmd.lower() == "点歌" and not route:
-            player = self.get_player(default=True)
-            source = None
-        if not player:
+        candidate_players = (
+            self.get_players_by_priority()
+            if is_generic_search
+            else [player]
+            if player
+            else []
+        )
+        if not candidate_players:
             return
         args = arg.split()
         index: int = int(args[-1]) if args[-1].isdigit() else 0
@@ -109,13 +126,36 @@ class MusicPlugin(Star):
         if not song_name:
             yield event.plain_result("未指定歌名")
             return
-        # 搜索歌曲
-        logger.debug(f"正在通过{player.platform.display_name}搜索歌曲：{song_name}")
-        songs = await player.fetch_songs(
-            keyword=song_name, limit=self.cfg.real_song_limit, extra=source
-        )
+        songs = []
+        attempted_sources = []
+        for candidate in candidate_players:
+            attempted_sources.append(candidate.platform.display_name)
+            logger.debug(
+                f"Searching {song_name} with {candidate.platform.display_name}"
+            )
+            try:
+                found_songs = await candidate.fetch_songs(
+                    keyword=song_name,
+                    limit=self.cfg.real_song_limit,
+                    extra=source if candidate is player else None,
+                )
+            except Exception as exc:
+                logger.warning(
+                    f"Search via {candidate.platform.display_name} failed: {exc}"
+                )
+                continue
+            if not found_songs:
+                continue
+            if is_generic_search and not pick_best_song(song_name, found_songs):
+                continue
+            player = candidate
+            songs = found_songs
+            break
         if not songs:
-            yield event.plain_result(f"未找到歌曲：{song_name}")
+            attempted = "、".join(attempted_sources) or "无可用音源"
+            yield event.plain_result(
+                f"未找到可靠匹配歌曲：{song_name}；已尝试音源：{attempted}"
+            )
             return
 
         # 单曲模式
@@ -209,30 +249,57 @@ class MusicPlugin(Star):
 
     @filter.llm_tool()
     async def play_song_by_name(
-        self, event: AstrMessageEvent, song_name: str, platform: str = ""
+        self,
+        event: AstrMessageEvent,
+        song_name: str,
+        platform: str = "",
+        artist: str = "",
     ):
         """当用户想听歌时，根据歌名（可含歌手）搜索并播放音乐。
 
         Args:
             song_name(string): 歌曲名称或包含歌手的关键词
-            platform(string): 音源标识或显示名称，例如 netease、netease_nodejs、neko、qqmusic、txqq、apple_music。留空时使用默认音源。
+            platform(string): 音源标识或显示名称，例如 netease、netease_nodejs、qqmusic、txqq、neko、apple_music。指定后仅使用该音源；留空时按音源优先级回退。
+            artist(string): 可选的指定歌手。填写后只接受歌手匹配的结果。
         """
-        platform = platform or self.cfg.search_config.default_source
-        player = self.get_player(name=platform)
-        if not player:
-            return f"音源「{platform}」不可用，可尝试其他音源"
-        platform_name = f"{player.platform.display_name}（{player.platform.name}）"
-        songs = await player.fetch_songs(
-            keyword=song_name, limit=self.cfg.search_config.song_limit
-        )
-        if not songs:
-            return f"音源「{platform_name}」未找到歌曲「{song_name}」，可尝试其他音源"
-        selected_song = pick_best_song(song_name, songs)
-        if not selected_song:
+        requested_platform = platform.strip()
+        if requested_platform:
+            selected_player = self.get_player(name=requested_platform)
+            if not selected_player:
+                return f"音源「{requested_platform}」不可用；指定音源时不会自动回退"
+            candidate_players = [selected_player]
+        else:
+            candidate_players = self.get_players_by_priority()
+
+        attempted_sources = []
+        selected_song = None
+        selected_player = None
+        for candidate in candidate_players:
+            attempted_sources.append(candidate.platform.display_name)
+            try:
+                songs = await candidate.fetch_songs(
+                    keyword=song_name, limit=self.cfg.search_config.song_limit
+                )
+            except Exception as exc:
+                logger.warning(
+                    f"Search via {candidate.platform.display_name} failed: {exc}"
+                )
+                continue
+            selected_song = pick_best_song(song_name, songs, artist=artist)
+            if selected_song:
+                selected_player = candidate
+                break
+
+        if not selected_song or not selected_player:
+            attempted = "、".join(attempted_sources) or "无可用音源"
             return (
-                f"音源「{platform_name}」未找到匹配歌曲「{song_name}」，可尝试其他音源"
+                f"未找到与《{song_name}》"
+                f"{f'（{artist}演唱）' if artist else ''}可靠匹配的歌曲；"
+                f"已尝试音源：{attempted}"
             )
-        sent = await self.sender.send_song(event, player, selected_song)
+
+        platform_name = f"{selected_player.platform.display_name}（{selected_player.platform.name}）"
+        sent = await self.sender.send_song(event, selected_player, selected_song)
         if not sent:
             return f"音源「{platform_name}」发送《{selected_song.name}》失败"
         if self.cfg.send_config.return_play_song_result:

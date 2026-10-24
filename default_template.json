@@ -2,6 +2,7 @@
   {
     "__template_key": "netease",
     "enable": true,
+    "priority": 1,
     "trigger_words": [
       "网易点歌"
     ],
@@ -13,6 +14,7 @@
   {
     "__template_key": "netease_nodejs",
     "enable": true,
+    "priority": 2,
     "trigger_words": [
       "NJ点歌"
     ],
@@ -23,6 +25,7 @@
   {
     "__template_key": "qqmusic",
     "enable": true,
+    "priority": 3,
     "trigger_words": [
       "QQ点歌"
     ],
@@ -31,19 +34,11 @@
     "proxy": ""
   },
   {
-    "__template_key": "neko",
-    "enable": true,
-    "trigger_words": [
-      "Neko点歌"
-    ],
-    "base_url": "https://music.nekocore.cn",
-    "proxy": ""
-  },
-  {
     "__template_key": "txqq",
     "enable": true,
+    "priority": 4,
     "trigger_words": [
-      "点歌:qq",
+      "TXQQ点歌:qq",
       "网易云音乐:netease",
       "酷狗音乐:kugou",
       "酷我音乐:kuwo",
@@ -62,8 +57,19 @@
     "proxy": ""
   },
   {
+    "__template_key": "neko",
+    "enable": true,
+    "priority": 5,
+    "trigger_words": [
+      "Neko点歌"
+    ],
+    "base_url": "https://music.nekocore.cn",
+    "proxy": ""
+  },
+  {
     "__template_key": "apple_music",
     "enable": true,
+    "priority": 6,
     "trigger_words": [
       "苹果点歌"
     ],
