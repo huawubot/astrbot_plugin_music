@@ -88,7 +88,7 @@
                     "text(文本模式)"
                 ]
             },
-            "enable_onebot_direct_audio": {
+            "onebot_direct_audio": {
                 "description": "OneBot 音频直发",
                 "hint": "开启时由 OneBot 直接发送音频 URL 或本地文件路径；部分部署环境不支持时可关闭并改用 AstrBot Record 发送。",
                 "type": "bool",

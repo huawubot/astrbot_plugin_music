@@ -540,7 +540,7 @@ class MusicSender:
         try:
             if (
                 isinstance(event, AiocqhttpMessageEvent)
-                and self.cfg.send_config.enable_onebot_direct_audio is not False
+                and self.cfg.send_config.onebot_direct_audio is not False
             ):
                 payloads = {
                     "message": [{"type": "record", "data": {"file": song.audio_url}}]
@@ -567,7 +567,7 @@ class MusicSender:
         try:
             if (
                 isinstance(event, AiocqhttpMessageEvent)
-                and self.cfg.send_config.enable_onebot_direct_audio is not False
+                and self.cfg.send_config.onebot_direct_audio is not False
             ):
                 # OneBot must be able to access this path, such as through a shared mount.
                 payloads = {

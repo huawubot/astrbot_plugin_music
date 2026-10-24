@@ -178,7 +178,7 @@ class SearchConfig(ConfigNode):
 
 class SendConfig(ConfigNode):
     send_modes: list[str]
-    enable_onebot_direct_audio: bool
+    onebot_direct_audio: bool
     ark_key: str
     record_unsupported: list[str]
     file_unsupported: list[str]
