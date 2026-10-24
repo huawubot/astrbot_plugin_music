@@ -88,6 +88,12 @@
                     "text(文本模式)"
                 ]
             },
+            "onebot_direct_audio": {
+                "description": "OneBot 音频直发",
+                "hint": "开启时由 OneBot 直接发送音频 URL 或本地文件路径；部分部署环境不支持时可关闭并改用 AstrBot Record 发送。",
+                "type": "bool",
+                "default": true
+            },
             "ark_key": {
                 "description": "签名卡片 API key",
                 "hint": "启用 签名卡片 发送方式时需填写。当前版本推荐使用的站点地址：https://apii.xianyuw.cn，注册后在用户中心复制API令牌填在此处",
@@ -221,6 +227,12 @@
                         "hint": "网易云 NodeJS API 服务的根 URL",
                         "type": "string",
                         "default": "https://zm.wwoyun.cn"
+                    },
+                    "api_token": {
+                        "description": "API 访问密钥",
+                        "hint": "API 的 Bearer 鉴权；公共 API 请留空。",
+                        "type": "string",
+                        "default": ""
                     },
                     "cookies": {
                         "description": "Cookies",
