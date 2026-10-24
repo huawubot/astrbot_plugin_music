@@ -302,10 +302,12 @@ class MusicPlugin(Star):
             )
 
         platform_name = f"{selected_player.platform.display_name}（{selected_player.platform.name}）"
-        sent = await self.sender.send_song(event, selected_player, selected_song)
+        sent, comment_sent = await self.sender.send_song(
+            event, selected_player, selected_song
+        )
         if not sent:
             return f"音源「{platform_name}」发送《{selected_song.name}》失败"
-        if self.cfg.send_config.return_play_song_result:
+        if self.cfg.send_config.return_play_song_result and not comment_sent:
             author = selected_song.artists or selected_song.author or "未知歌手"
             return (
                 f"已通过音源「{platform_name}」发送《{selected_song.name} - {author}》"
