@@ -269,7 +269,7 @@
                         "description": "绑定 QQ 号（UIN）",
                         "hint": "必填。填写 QQ 音乐绿钻绑定的 QQ 号，用于搜索接口鉴权；未填写时该音源不会返回搜索结果。",
                         "type": "string",
-                        "default": ""
+                        "default": "10001"
                     },
                     "cookies": {
                         "description": "QQ 音乐 Cookies",
