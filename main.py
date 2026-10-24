@@ -217,25 +217,26 @@ class MusicPlugin(Star):
             song_name(string): 歌曲名称或包含歌手的关键词
             platform(string): 音源标识或显示名称，例如 netease、netease_nodejs、neko、qqmusic、txqq、apple_music。留空时使用默认音源。
         """
-
-        player = (
-            self.get_player(name=platform)
-            if platform
-            else self.get_player(default=True)
-        )
+        platform = platform or self.cfg.search_config.default_source
+        player = self.get_player(name=platform)
         if not player:
-            return f"无可用播放器 {platform}"
+            return f"音源「{platform}」不可用，可尝试其他音源"
+        platform_name = f"{player.platform.display_name}（{player.platform.name}）"
         songs = await player.fetch_songs(
             keyword=song_name, limit=self.cfg.search_config.song_limit
         )
         if not songs:
-            return "没找到相关歌曲"
+            return f"音源「{platform_name}」未找到歌曲「{song_name}」，可尝试其他音源"
         selected_song = pick_best_song(song_name, songs)
         if not selected_song:
-            return "没找到相关歌曲"
+            return (
+                f"音源「{platform_name}」未找到匹配歌曲「{song_name}」，可尝试其他音源"
+            )
         sent = await self.sender.send_song(event, player, selected_song)
         if not sent:
-            return f"《{selected_song.name}》发送失败"
+            return f"音源「{platform_name}」发送《{selected_song.name}》失败"
         if self.cfg.send_config.return_play_song_result:
             author = selected_song.artists or selected_song.author or "未知歌手"
-            return f"已发送《{selected_song.name} - {author}》 "
+            return (
+                f"已通过音源「{platform_name}」发送《{selected_song.name} - {author}》"
+            )
