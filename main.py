@@ -151,12 +151,13 @@ class MusicPlugin(Star):
             player = candidate
             songs = found_songs
             break
-        if not songs:
+        if not songs or player is None:
             attempted = "、".join(attempted_sources) or "无可用音源"
             yield event.plain_result(
                 f"未找到可靠匹配歌曲：{song_name}；已尝试音源：{attempted}"
             )
             return
+        selected_player = player
 
         # 单曲模式
         if len(songs) == 1:
@@ -165,13 +166,13 @@ class MusicPlugin(Star):
         # 输入了序号，直接发送歌曲
         if index and 0 <= index <= len(songs):
             selected_song = songs[int(index) - 1]
-            await self.sender.send_song(event, player, selected_song)
+            await self.sender.send_song(event, selected_player, selected_song)
             event.stop_event()
             return
 
         # 未提输入序号，等待用户选择歌曲
         selection_mode = await self.sender.send_song_selection(
-            event=event, songs=songs, player=player
+            event=event, songs=songs, player=selected_player
         )
 
         if selection_mode == "button":
@@ -204,7 +205,9 @@ class MusicPlugin(Star):
                 return
             selected_song = songs[index - 1]
             controller.stop()
-            await self.sender.send_song(event, player, selected_song, modes=modes)
+            await self.sender.send_song(
+                event, selected_player, selected_song, modes=modes
+            )
 
         try:
             await empty_mention_waiter(event)
