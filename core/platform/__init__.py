@@ -8,10 +8,10 @@ from .txqq import TXQQMusic
 
 __all__ = [
     "BaseMusicPlayer",
-    "AppleMusic",
-    "NekoMusic",
     "NetEaseMusic",
     "NetEaseMusicNodeJS",
     "QQMusicOfficial",
     "TXQQMusic",
+    "NekoMusic",
+    "AppleMusic",
 ]
