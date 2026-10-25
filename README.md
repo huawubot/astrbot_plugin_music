@@ -95,9 +95,7 @@ _🎵 高性能多平台点歌插件 🎵_
 
 ### 自部署网易云Nodejs项目获得网易云音源
 
-- 由于官方已停止维护项目地址：[网易云Nodejs项目官网](https://neteasecloudmusicapi.js.org/#/)
-
-- 如果官方已停止维护，可以尝试用：https://github.com/neteasecloudmusicapienhanced/api-enhanced
+如果[网易云Nodejs项目原仓库](https://neteasecloudmusicapi.js.org/#/)已停止维护，可以尝试用：https://github.com/neteasecloudmusicapienhanced/api-enhanced
 
 ### 通过公开的项目获取网易云音源
 
