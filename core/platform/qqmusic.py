@@ -1,6 +1,7 @@
 import asyncio
 import gzip
 import json
+import urllib.parse
 import urllib.request
 import uuid
 from pathlib import Path
@@ -24,6 +25,8 @@ class QQMusicOfficial(BaseMusicPlayer):
     )
 
     API_URL = "https://u.y.qq.com/cgi-bin/musicu.fcg"
+    LYRIC_API_URL = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg"
+    COMMENTS_API_URL = "https://c.y.qq.com/base/fcgi-bin/fcg_global_comment_h5.fcg"
     DOWNLOAD_HEADERS: ClassVar[dict[str, str]] = {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -251,6 +254,11 @@ class QQMusicOfficial(BaseMusicPlayer):
                     artists=singers,
                     duration=interval * 1000 if interval else None,
                     cover_url=cover_url,
+                    page_url=(
+                        f"https://y.qq.com/n/ryqq/songDetail/{item['mid']}"
+                        if item.get("mid")
+                        else None
+                    ),
                     audio_url=None,
                     note=item.get("mid") or "",
                 )
@@ -320,4 +328,139 @@ class QQMusicOfficial(BaseMusicPlayer):
             song.audio_url = servers[0] + url_info[0]["purl"]
         else:
             logger.warning(f"QQ Music did not return an audio URL for song {song.note}")
+        return song
+
+    async def fetch_lyrics(self, song: Song) -> Song:
+        """Fetch QQ Music lyrics by song ID, falling back to song MID.
+
+        Args:
+            song: Song returned by the QQ Music search API.
+
+        Returns:
+            The song with lyrics when QQ Music provides them.
+        """
+        if song.lyrics:
+            return song
+
+        identifiers = []
+        if song.id:
+            identifiers.append(("musicid", str(song.id)))
+        if song.note and song.note != song.id:
+            identifiers.append(("songmid", song.note))
+
+        for identifier, value in identifiers:
+            params = urllib.parse.urlencode(
+                {
+                    "nobase64": 1,
+                    identifier: value,
+                    "songtype": 0,
+                    "loginUin": 0,
+                    "format": "json",
+                }
+            )
+            request = urllib.request.Request(
+                f"{self.LYRIC_API_URL}?{params}", headers=self.DOWNLOAD_HEADERS
+            )
+            try:
+                proxy = self.platform_cfg.proxy or None
+                proxy_handler = {"http": proxy, "https": proxy} if proxy else {}
+                opener = urllib.request.build_opener(
+                    urllib.request.ProxyHandler(proxy_handler)
+                )
+                response = await asyncio.to_thread(opener.open, request, timeout=15)
+                try:
+                    if response.status != 200:
+                        logger.warning(
+                            f"QQ Music lyric API returned HTTP {response.status}"
+                        )
+                        continue
+                    raw = await asyncio.to_thread(response.read)
+                finally:
+                    response.close()
+
+                result = json.loads(raw.decode("utf-8", "ignore"))
+                lyric = result.get("lyric") if isinstance(result, dict) else None
+                if isinstance(lyric, str) and lyric.strip():
+                    song.lyrics = lyric
+                    return song
+            except Exception as exc:
+                logger.warning(f"QQ Music lyric request failed: {exc}")
+
+        return song
+
+    async def fetch_comments(self, song: Song) -> Song:
+        """Fetch popular comments for a QQ Music song.
+
+        Args:
+            song: Song returned by the QQ Music search API.
+
+        Returns:
+            The song with popular comments when QQ Music provides them.
+        """
+        if song.comments or not song.id:
+            return song
+
+        params = urllib.parse.urlencode(
+            {
+                "g_tk": 0,
+                "loginUin": 0,
+                "hostUin": 0,
+                "format": "json",
+                "inCharset": "utf8",
+                "outCharset": "utf-8",
+                "notice": 0,
+                "platform": "yqq.json",
+                "needNewCode": 0,
+                "cid": "205360772",
+                "reqtype": 2,
+                "biztype": 1,
+                "topid": song.id,
+                "cmd": 8,
+                "needmusiccrit": 0,
+                "pagenum": 0,
+                "pagesize": 15,
+            }
+        )
+        request = urllib.request.Request(
+            f"{self.COMMENTS_API_URL}?{params}", headers=self.DOWNLOAD_HEADERS
+        )
+        try:
+            proxy = self.platform_cfg.proxy or None
+            proxy_handler = {"http": proxy, "https": proxy} if proxy else {}
+            opener = urllib.request.build_opener(
+                urllib.request.ProxyHandler(proxy_handler)
+            )
+            response = await asyncio.to_thread(opener.open, request, timeout=15)
+            try:
+                if response.status != 200:
+                    logger.warning(
+                        f"QQ Music comments API returned HTTP {response.status}"
+                    )
+                    return song
+                raw = await asyncio.to_thread(response.read)
+            finally:
+                response.close()
+
+            result = json.loads(raw.decode("utf-8", "ignore"))
+            hot_comments = (
+                result.get("hot_comment") if isinstance(result, dict) else None
+            )
+            comment_list = (
+                hot_comments.get("commentlist")
+                if isinstance(hot_comments, dict)
+                else None
+            )
+            if isinstance(comment_list, list):
+                song.comments = [
+                    {
+                        "content": item.get("rootcommentcontent", ""),
+                        "nickname": item.get("nick", ""),
+                        "likedCount": item.get("praisenum", 0),
+                    }
+                    for item in comment_list
+                    if isinstance(item, dict) and item.get("rootcommentcontent")
+                ]
+        except Exception as exc:
+            logger.warning(f"QQ Music comments request failed: {exc}")
+
         return song

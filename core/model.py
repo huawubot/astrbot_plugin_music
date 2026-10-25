@@ -18,14 +18,11 @@ class Song:
     duration: int | None = None
     """时长（毫秒）"""
 
-    title: str | None = None
-    """可补充的显示名称"""
-
-    author: str | None = None
-    """可补充的作者/歌手名"""
-
     cover_url: str | None = None
     """封面图 URL"""
+
+    page_url: str | None = None
+    """音源平台的歌曲页面 URL，用于卡片跳转"""
 
     audio_url: str | None = None
     """音频播放 URL"""
@@ -46,8 +43,8 @@ class Song:
         """将 Song 信息整理成多行文本"""
         lines = [
             f"ID: {self.id}",
-            f"名称: {self.name or self.title or '未知'}",
-            f"艺人: {self.artists or self.author or '未知'}",
+            f"名称: {self.name or '未知'}",
+            f"艺人: {self.artists or '未知'}",
         ]
         if self.duration:
             mins, secs = divmod(self.duration // 1000, 60)
@@ -56,6 +53,8 @@ class Song:
             lines.append(f"播放链接: {self.audio_url}")
         if self.cover_url:
             lines.append(f"封面: {self.cover_url}")
+        if self.page_url:
+            lines.append(f"歌曲页面: {self.page_url}")
         if self.note:
             lines.append(f"备注: {self.note}")
         return "\n".join(lines)

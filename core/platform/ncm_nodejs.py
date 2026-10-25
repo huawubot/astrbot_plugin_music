@@ -45,7 +45,6 @@ class NetEaseMusicNodeJS(BaseMusicPlayer):
             return []
 
         songs = result.get("result", {}).get("songs", [])[:limit]
-
         parsed_songs = []
         for item in songs:
             if not isinstance(item, dict):
@@ -63,6 +62,11 @@ class NetEaseMusicNodeJS(BaseMusicPlayer):
                     ),
                     duration=item.get("duration") or item.get("dt"),
                     cover_url=album.get("picUrl") if isinstance(album, dict) else None,
+                    page_url=(
+                        f"https://music.163.com/song?id={item['id']}"
+                        if item.get("id")
+                        else None
+                    ),
                 )
             )
         return parsed_songs

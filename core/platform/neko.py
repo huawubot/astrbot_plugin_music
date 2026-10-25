@@ -267,7 +267,12 @@ class NekoMusic(BaseMusicPlayer):
             if not isinstance(item, Mapping) or item.get("id") is None:
                 continue
             song_id = str(item["id"])
-            artists = item.get("artist", item.get("singer", item.get("ar")))
+            artists = (
+                item.get("artist")
+                or item.get("singer")
+                or item.get("ar")
+                or item.get("author")
+            )
             if isinstance(artists, list):
                 artists = "、".join(
                     artist.get("name", "")
@@ -295,6 +300,7 @@ class NekoMusic(BaseMusicPlayer):
                     if isinstance(duration, (int, float))
                     else None,
                     cover_url=f"{self.base_url}/api/music/cover/{song_id}",
+                    page_url=item.get("page_url") or item.get("web_url"),
                     note=album,
                 )
             )
@@ -365,7 +371,7 @@ class NekoMusic(BaseMusicPlayer):
                 url,
                 headers=self._api_headers(),
                 proxy=self.platform_cfg.proxy or None,
-                timeout=120, # type: ignore
+                timeout=120,  # type: ignore
             ) as response:
                 if response.status != 200:
                     logger.warning(
