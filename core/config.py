@@ -139,6 +139,7 @@ class MusicPlayerItem(ConfigNode):
     region: str | None
     uin: str | None
     cookies: str | None
+    support_card: bool
     proxy: str | None
     enc_sec_key: str | None
     enc_params: str | None
@@ -157,8 +158,14 @@ class MusicPlayerConfig(ConfigNodeContainer):
     txqq: MusicPlayerItem
     neko: MusicPlayerItem
     apple_music: MusicPlayerItem
+    CARD_SUPPORTED_PLATFORMS = {"netease", "netease_nodejs", "qqmusic", "txqq"}
 
     def __init__(self, nodes: list[dict[str, Any]]):
+        for node in nodes:
+            node.setdefault(
+                "support_card",
+                node.get("__template_key") in self.CARD_SUPPORTED_PLATFORMS,
+            )
         super().__init__(nodes, item_cls=MusicPlayerItem)
 
     def platforms(self) -> list[str]:

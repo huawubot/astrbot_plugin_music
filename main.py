@@ -154,7 +154,7 @@ class MusicPlugin(Star):
         if not songs or player is None:
             attempted = "、".join(attempted_sources) or "无可用音源"
             yield event.plain_result(
-                f"未找到可靠匹配歌曲：{song_name}；已尝试音源：{attempted}"
+                f"未找到可靠匹配歌曲：{song_name}\n已尝试音源：{attempted}"
             )
             return
         selected_player = player
@@ -332,7 +332,7 @@ class MusicPlugin(Star):
         if not sent:
             return f"音源「{platform_name}」发送《{selected_song.name}》失败"
         if self.cfg.send_config.return_play_song_result and not comment_sent:
-            author = selected_song.artists or selected_song.author or "未知歌手"
+            author = selected_song.artists or "未知歌手"
             return (
                 f"已通过音源「{platform_name}」发送《{selected_song.name} - {author}》"
             )

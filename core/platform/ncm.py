@@ -43,6 +43,9 @@ class NetEaseMusic(BaseMusicPlayer):
                 name=s.get("name"),
                 artists="、".join(a["name"] for a in s["artists"]),
                 duration=s.get("duration"),
+                page_url=f"https://music.163.com/song?id={s['id']}"
+                if s.get("id")
+                else None,
             )
             for s in songs
         ]

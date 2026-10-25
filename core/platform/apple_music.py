@@ -77,6 +77,7 @@ class AppleMusic(BaseMusicPlayer):
                         artists=track.get("artistName"),
                         duration=track.get("trackTimeMillis"),
                         cover_url=artwork or None,
+                        page_url=track.get("trackViewUrl"),
                         audio_url=track["previewUrl"],
                         note=track.get("collectionName"),
                     )

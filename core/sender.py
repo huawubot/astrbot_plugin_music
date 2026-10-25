@@ -40,7 +40,7 @@ from .ark_card import ArkCard
 from .config import PluginConfig
 from .lyrics_renderer import LyricsRenderer
 from .model import Song
-from .platform import AppleMusic, BaseMusicPlayer, QQMusicOfficial, TXQQMusic
+from .platform import BaseMusicPlayer
 from .song_renderer import CardRenderer
 
 
@@ -260,7 +260,7 @@ class MusicSender:
     ) -> str | int | None:
         lins = [f"【{player.platform.display_name}】"]
         for index, song in enumerate(songs):
-            lins.append(f"{index + 1}. {song.name} - {song.artists or song.author}")
+            lins.append(f"{index + 1}. {song.name} - {song.artists or ''}")
         msg = "\n".join(lins)
         message_id: str | int | None = None
         if isinstance(event, AiocqhttpMessageEvent):
@@ -473,39 +473,26 @@ class MusicSender:
         self, event: AiocqhttpMessageEvent, player: BaseMusicPlayer, song: Song
     ) -> bool:
         """发卡片"""
-        music_data: dict = {
-            "type": "custom",
-            "audio": song.audio_url or "",
-            "title": song.name or "",
-            "image": song.cover_url or "",
-        }
-        if isinstance(player, QQMusicOfficial):
-            if song.audio_url:
-                mid = song.note or song.id
-                music_data.update(
-                    {
-                        "url": f"https://y.qq.com/n/ryqq/songDetail/{mid}",
-                        "content": song.artists or "",
-                    }
-                )
-            else:
-                music_data = {"type": "qq", "id": song.id}
-        elif isinstance(player, TXQQMusic):
-            music_data.update(
-                {
-                    "url": song.audio_url or "",
-                    "singer": song.artists or "",
-                }
-            )
-        elif isinstance(player, AppleMusic):
-            music_data.update(
-                {
-                    "url": song.audio_url or "",
-                    "content": song.artists or "",
-                }
-            )
+        if song.audio_url:
+            music_data = {
+                "type": "custom",
+                "url": song.page_url or song.audio_url,
+                "audio": song.audio_url,
+                "title": song.name or "",
+                "content": song.artists or "",
+                "image": song.cover_url or "",
+            }
         else:
-            music_data = {"type": "163", "id": song.id}
+            source = (song.source or player.platform.name).lower()
+            if source in {"qq", "qqmusic"}:
+                music_data = {"type": "qq", "id": song.id}
+            elif source in {"netease", "netease_nodejs"}:
+                music_data = {"type": "163", "id": song.id}
+            else:
+                logger.warning(
+                    f"Cannot send a native music card without audio URL: {source}"
+                )
+                return False
 
         payloads = {"message": [{"type": "music", "data": music_data}]}
         try:
@@ -728,6 +715,14 @@ class MusicSender:
         target_modes = modes if modes is not None else self.cfg.real_send_modes
 
         for mode in target_modes:
+            if mode in ("card", "ark_card") and not player.platform_cfg.support_card:
+                logger.debug(
+                    f"{player.platform.name} does not support card sending; skipping"
+                )
+                continue
+            if mode == "ark_card" and not (self.cfg.send_config.ark_key or "").strip():
+                logger.debug("Ark card API key is not configured; skipping")
+                continue
             if not self._is_mode_supported(mode, event):
                 logger.debug(f"{mode} 不支持，跳过")
                 continue
@@ -752,12 +747,6 @@ class MusicSender:
         if not sent:
             await event.send(event.plain_result("歌曲发送失败"))
             return False, False
-
-        if player.platform.name == "netease_nodejs" and song.note:
-            try:
-                await event.send(event.plain_result(f"【{song.name}】{song.note}"))
-            except Exception as exc:
-                logger.warning(f"歌曲已发出，但来源提示发送失败: {exc}")
 
         self.clear_selection_context(event)
         if self.cfg.search_config.recall_select:

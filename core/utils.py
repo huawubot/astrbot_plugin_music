@@ -62,8 +62,8 @@ def pick_best_song(
 
     matches: list[tuple[int, Song]] = []
     for song in songs:
-        title = normalize(song.name or song.title or "")
-        singer = normalize(song.artists or song.author or "")
+        title = normalize(song.name or "")
+        singer = normalize(song.artists or "")
         if not title:
             continue
 

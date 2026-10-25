@@ -70,7 +70,7 @@ class ArkCard:
         if not song.audio_url:
             logger.warning(f"Ark card is missing required song data: {song.name}")
             return None
-        singer = song.artists or song.author or "Unknown artist"
+        singer = song.artists or "Unknown artist"
 
         source = (song.source or player.platform.name).lower()
         proxy = player.platform_cfg.proxy if player.platform_cfg else None
@@ -93,7 +93,7 @@ class ArkCard:
             "song": song.name,
             "singer": singer,
             "cover": cover_url,
-            "jump": song.audio_url,
+            "jump": song.page_url or song.audio_url,
             "format": card_format,
         }
         try:
