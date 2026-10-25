@@ -10,6 +10,7 @@ from astrbot.core.utils.session_waiter import (
 )
 
 from .core.config import PluginConfig
+from .core.kugou_login import KuGouLogin
 from .core.lyrics_renderer import LyricsRenderer
 from .core.platform import BaseMusicPlayer
 from .core.qqmusic_login import QQMusicLogin
@@ -24,6 +25,7 @@ class MusicPlugin(Star):
         self.context = context
         self.cfg = PluginConfig(config, context)
         self.qqmusic_login = QQMusicLogin(self.cfg)
+        self.kugou_login = KuGouLogin(self.cfg)
         self.lyrics_renderer = LyricsRenderer(self.cfg)
         self.song_renderer = CardRenderer(self.cfg)
         self.sender = MusicSender(
@@ -41,6 +43,7 @@ class MusicPlugin(Star):
 
     async def terminate(self):
         await self.qqmusic_login.close()
+        await self.kugou_login.close()
         await self.sender.close()
         for parser in self.players:
             await parser.close()
@@ -50,6 +53,12 @@ class MusicPlugin(Star):
     async def login_qqmusic(self, event: AstrMessageEvent):
         """扫码登录QQ音乐，获取Cookies"""
         await self.qqmusic_login.start(event)
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @filter.command("登录酷狗")
+    async def login_kugou(self, event: AstrMessageEvent):
+        """Scan a QR code to log in to KuGou Music."""
+        await self.kugou_login.start(event)
 
     def get_player(
         self, name: str | None = None, word: str | None = None, default: bool = False
@@ -272,7 +281,7 @@ class MusicPlugin(Star):
 
         Args:
             song_name(string): 歌曲名称或包含歌手的关键词
-            platform(string): 音源标识或显示名称，例如 netease、netease_nodejs、qqmusic、txqq、neko、apple_music。指定后仅使用该音源；留空时按音源优先级回退。
+            platform(string): 音源标识或显示名称，例如 netease、netease_api、qqmusic、kugou、kugou_api、txqq、neko、apple。指定后仅使用该音源；留空时按音源优先级回退。
             artist(string): 可选的指定歌手。填写后只接受歌手匹配的结果。
             send_mode(string): 可选的本次发送方式，支持 voice、record_link、ark_card、card、file_local、file_link、text；留空或 auto 时使用后台默认顺序。
         """

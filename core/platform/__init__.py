@@ -1,16 +1,20 @@
-from .apple_music import AppleMusic
+from .apple import AppleMusic
 from .base import BaseMusicPlayer
-from .ncm import NetEaseMusic
-from .ncm_nodejs import NetEaseMusicNodeJS
+from .kugou import KuGouMusic
+from .kugou_api import KuGouMusicAPI
 from .neko import NekoMusic
-from .qqmusic import QQMusicOfficial
+from .netease import NetEaseMusic
+from .netease_api import NetEaseMusicAPI
+from .qqmusic import QQMusic
 from .txqq import TXQQMusic
 
 __all__ = [
     "BaseMusicPlayer",
     "NetEaseMusic",
-    "NetEaseMusicNodeJS",
-    "QQMusicOfficial",
+    "NetEaseMusicAPI",
+    "QQMusic",
+    "KuGouMusicAPI",
+    "KuGouMusic",
     "TXQQMusic",
     "NekoMusic",
     "AppleMusic",

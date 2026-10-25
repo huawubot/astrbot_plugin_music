@@ -153,12 +153,21 @@ class MusicPlayerConfig(ConfigNodeContainer):
     """Typed collection of configured music source platforms."""
 
     netease: MusicPlayerItem
-    netease_nodejs: MusicPlayerItem
+    netease_api: MusicPlayerItem
     qqmusic: MusicPlayerItem
+    kugou: MusicPlayerItem
+    kugou_api: MusicPlayerItem
     txqq: MusicPlayerItem
     neko: MusicPlayerItem
-    apple_music: MusicPlayerItem
-    CARD_SUPPORTED_PLATFORMS = {"netease", "netease_nodejs", "qqmusic", "txqq"}
+    apple: MusicPlayerItem
+    CARD_SUPPORTED_PLATFORMS = {
+        "netease",
+        "netease_api",
+        "qqmusic",
+        "kugou",
+        "kugou_api",
+        "txqq",
+    }
 
     def __init__(self, nodes: list[dict[str, Any]]):
         for node in nodes:

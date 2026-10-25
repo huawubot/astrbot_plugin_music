@@ -19,8 +19,9 @@ class ArkCard:
         "qqmusic": "qq",
         "txqq": "qq",
         "netease": "netease",
-        "netease_nodejs": "netease",
+        "netease_api": "netease",
         "kugou": "kugou",
+        "kugou_api": "kugou",
         "bilibili": "bilibili",
     }
     REQUIRED_FIELDS = {"app", "meta", "prompt", "view"}

@@ -13,7 +13,7 @@
     "enc_params": "D33zyir4L/58v1qGPcIPjSee79KCzxBIBy507IYDB8EL7jEnp41aDIqpHBhowfQ6iT1Xoka8jD+0p44nRKNKUA0dv+n5RWPOO57dZLVrd+T1J/sNrTdzUhdHhoKRIgegVcXYjYu+CshdtCBe6WEJozBRlaHyLeJtGrABfMOEb4PqgI3h/uELC82S05NtewlbLZ3TOR/TIIhNV6hVTtqHDVHjkekrvEmJzT5pk1UY6r0="
   },
   {
-    "__template_key": "netease_nodejs",
+    "__template_key": "netease_api",
     "support_card": true,
     "enable": true,
     "priority": 2,
@@ -38,10 +38,32 @@
     "proxy": ""
   },
   {
-    "__template_key": "txqq",
+    "__template_key": "kugou",
     "support_card": true,
     "enable": true,
     "priority": 4,
+    "trigger_words": [
+      "酷狗点歌"
+    ],
+    "cookies": "",
+    "proxy": ""
+  },
+  {
+    "__template_key": "kugou_api",
+    "support_card": true,
+    "enable": true,
+    "priority": 5,
+    "trigger_words": [
+      "酷狗api点歌"
+    ],
+    "base_url": "http://127.0.0.1:3000",
+    "proxy": ""
+  },
+  {
+    "__template_key": "txqq",
+    "support_card": true,
+    "enable": true,
+    "priority": 6,
     "trigger_words": [
       "TXQQ点歌:qq",
       "网易云音乐:netease",
@@ -65,7 +87,7 @@
     "__template_key": "neko",
     "support_card": false,
     "enable": true,
-    "priority": 5,
+    "priority": 7,
     "trigger_words": [
       "Neko点歌"
     ],
@@ -73,10 +95,10 @@
     "proxy": ""
   },
   {
-    "__template_key": "apple_music",
+    "__template_key": "apple",
     "support_card": false,
     "enable": true,
-    "priority": 6,
+    "priority": 8,
     "trigger_words": [
       "苹果点歌"
     ],
