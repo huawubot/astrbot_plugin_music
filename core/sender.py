@@ -630,9 +630,13 @@ class MusicSender:
             # 没有评论
             return False
         try:
-            content = re.sub(
-                r"\[[^\]]*]", "", random.choice(song.comments).get("content", "")
-            ).strip()
+            content = (
+                re.sub(
+                    r"\[[^\]]*]", "", random.choice(song.comments).get("content", "")
+                )
+                .replace("\\n", "\n")
+                .strip()
+            )
             await event.send(event.plain_result(content))
             return True
         except Exception:
