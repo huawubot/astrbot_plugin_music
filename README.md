@@ -96,60 +96,13 @@ _🎵 高性能多平台点歌插件 🎵_
 
 ## 🎶 网易云Nodejs模块说明
 
-### 自部署网易云Nodejs项目获得网易云音源
+方式一：自部署网易云Nodejs
 
-如果[网易云Nodejs项目原仓库](https://neteasecloudmusicapi.js.org/#/)已停止维护，可以尝试用：https://github.com/neteasecloudmusicapienhanced/api-enhanced
+如果[网易云Nodejs项目原仓库](https://neteasecloudmusicapi.js.org/#/)已停止维护，可以尝试用：[api-enhanced](https://github.com/neteasecloudmusicapienhanced/api-enhanced)。部署好后，在 **音乐音源** 中添加 **网易云音乐API版**，将 **API 根地址** 设置为自建服务地址并启用该音源，即可完成配置。
 
-### 通过公开的项目获取网易云音源
+方式二：通过公开的项目获取网易云音源
 
-  如果你不想搭建服务器，又不能使用默认的服务，可以在互联网上搜索`allinurl:eapi_decrypt.html`来寻找公开项目的域名。下面贴一些搜集的公开url。
-
-  ```text
-  https://zm.wwoyun.cn
-  https://zm.armoe.cn
-  http://dg-t.cn:3000
-  http://111.229.38.178:3333
-  https://wyy.xhily.com/
-  http://45.152.64.114:3005
-  http://42.193.244.179:3000
-  https://music-api.focalors.ltd
-  ```
-
-  举例：在 **音乐音源** 中添加 **网易云音乐 NodeJS**，将 **API 根地址** 设置为 `https://zm.wwoyun.cn` 并启用该音源。可以多尝试几个域名来寻找稳定音源。
-- 部署自己的项目
-
-  通过官网介绍部署项目，获得稳定音源。这里介绍docker compose快速部署。
-
-  修改`astrbot.yml`文件，添加服务
-
-  ```yaml
-    netease_cloud_music_api:
-      image: binaryify/netease_cloud_music_api
-      container_name: netease_cloud_music_api
-      environment:
-        - http_proxy=
-        - https_proxy=
-        - no_proxy=
-        - HTTP_PROXY=
-        - HTTPS_PROXY=
-        - NO_PROXY=
-      networks:
-        - astrbot_network
-      # ports:
-      #   - "3000:3000" 可以通过公共端口来调试
-  ```
-
-  然后在`astrbot.yml`文件所在的目录运行命令启动服务：
-
-  ```cmd
-  docker compose -f astrbot.yml up -d netease_cloud_music_api
-  ```
-
-  如果你开放了上面的调试端口，可以通过`{主机名}:3000`访问示例页面
-
-  在 **音乐音源** 中添加 **网易云音乐 NodeJS**，将 **API 根地址** 设置为自建服务地址并启用该音源，即可完成配置。
-
-  这里的端口号3000可以修改成其他端口，具体见 Nodejs项目 文档。
+如果你不想搭建服务器，又不能使用默认的服务，可以在互联网上搜索`allinurl:eapi_decrypt.html`来寻找公开项目的域名。下面贴一些搜集的公开url。这里提供一个目前暂时还可用的公开URL:  `https://zm.wwoyun.cn`。**音乐音源** 中 **网易云音乐API版** 已默认使用此 URL.
 
 ---
 
@@ -164,4 +117,5 @@ _🎵 高性能多平台点歌插件 🎵_
 
 - 想第一时间得到反馈的可以来作者的插件反馈群（QQ群）：460973561（不点star不给进）
 - QQ 官方机器人请注意：安装本插件后需要重启一遍 bot, 让按钮补丁打进官机适配器里后， 才能正常使用按钮模式点歌。如果按钮仍无法使用，推荐安装 piexian 开发的 [QQ 官方机器人补丁插件](https://github.com/piexian/astrbot_plugin_qqoffice_expand) （安装完后也要重启 bot）
+- 发卡片需签名：如果想在 QQ 用音乐卡片听音乐。需前往 [apii.xianyuw.cn](https://apii.xianyuw.cn) ，注册账后，从用户中心复制 API 令牌填在插件的发歌配置里，填完即可让 bot 发音乐卡片（你也不想听语音条的全损音质吧~）
  
