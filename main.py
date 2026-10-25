@@ -12,6 +12,7 @@ from astrbot.core.utils.session_waiter import (
 from .core.config import PluginConfig
 from .core.lyrics_renderer import LyricsRenderer
 from .core.platform import BaseMusicPlayer
+from .core.qqmusic_login import QQMusicLogin
 from .core.sender import MusicSender
 from .core.song_renderer import CardRenderer
 from .core.utils import parse_user_input, pick_best_song
@@ -22,6 +23,7 @@ class MusicPlugin(Star):
         super().__init__(context)
         self.context = context
         self.cfg = PluginConfig(config, context)
+        self.qqmusic_login = QQMusicLogin(self.cfg)
         self.lyrics_renderer = LyricsRenderer(self.cfg)
         self.song_renderer = CardRenderer(self.cfg)
         self.sender = MusicSender(
@@ -38,9 +40,16 @@ class MusicPlugin(Star):
         self._register_player()
 
     async def terminate(self):
+        await self.qqmusic_login.close()
         await self.sender.close()
         for parser in self.players:
             await parser.close()
+
+    @filter.permission_type(filter.PermissionType.ADMIN)
+    @filter.command("登录Q音", alias={"登录QQ音乐"})
+    async def login_qqmusic(self, event: AstrMessageEvent):
+        """扫码登录QQ音乐，获取Cookies"""
+        await self.qqmusic_login.start(event)
 
     def get_player(
         self, name: str | None = None, word: str | None = None, default: bool = False
