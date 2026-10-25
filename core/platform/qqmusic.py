@@ -16,7 +16,7 @@ from ..model import Platform, Song
 from .base import BaseMusicPlayer
 
 
-class QQMusicOfficial(BaseMusicPlayer):
+class QQMusic(BaseMusicPlayer):
     """QQ Music search and playback integration."""
 
     platform = Platform(

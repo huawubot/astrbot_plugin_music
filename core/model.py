@@ -39,6 +39,12 @@ class Song:
     note: str | None = None
     """备注，例如来源或额外信息"""
 
+    album_id: int | None = None
+    """KuGou album identifier when provided by the search result."""
+
+    album_audio_id: int | None = None
+    """KuGou album audio identifier used by playback endpoints."""
+
     def to_lines(self) -> str:
         """将 Song 信息整理成多行文本"""
         lines = [

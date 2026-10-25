@@ -203,9 +203,7 @@ class QQMusicLogin:
         """
         async with self._start_lock:
             if self._task and not self._task.done():
-                await event.send(
-                    event.plain_result("已有 QQ 音乐登录会话正在等待扫码")
-                )
+                await event.send(event.plain_result("已有 QQ 音乐登录会话正在等待扫码"))
                 event.stop_event()
                 return
 
@@ -339,9 +337,7 @@ class QQMusicLogin:
                 qqmusic_config.uin = uin
                 self.config.save_config()
                 await event.send(
-                    event.plain_result(
-                        f"QQ 音乐登录成功，Cookie 已写入音源配置。UIN：{uin}"
-                    )
+                    event.plain_result(f"QQ 音乐登录成功，Cookie已写入配置。QQ：{uin}")
                 )
                 return
             await event.send(event.plain_result("QQ 登录二维码已超时，请重新登录"))

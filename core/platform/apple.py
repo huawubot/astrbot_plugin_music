@@ -12,7 +12,7 @@ class AppleMusic(BaseMusicPlayer):
     """Search Apple's public iTunes catalog and return its official previews."""
 
     platform: ClassVar[Platform] = Platform(
-        name="apple_music",
+        name="apple",
         display_name="Apple Music",
     )
     SEARCH_URL = "https://itunes.apple.com/search"

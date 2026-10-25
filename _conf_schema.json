@@ -157,6 +157,13 @@
                         "type": "bool",
                         "default": true
                     },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": true
+                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
@@ -167,7 +174,7 @@
                     },
                     "cookies": {
                         "description": "Cookies",
-                        "hint": "预留的登录态配置；当前网易云 Web API 实现暂不读取此字段。",
+                        "hint": "预留的登录态配置；当前网易云音源实现暂不读取此字段。",
                         "type": "text",
                         "invisible": true,
                         "default": ""
@@ -194,8 +201,8 @@
                     }
                 }
             },
-            "netease_nodejs": {
-                "name": "网易云音乐 NodeJS",
+            "netease_api": {
+                "name": "网易云音乐API版",
                 "items": {
                     "priority": {
                         "description": "优先级",
@@ -214,12 +221,19 @@
                         "type": "bool",
                         "default": true
                     },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": true
+                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
                         "type": "list",
                         "default": [
-                            "NJ点歌"
+                            "网易api点歌"
                         ]
                     },
                     "base_url": {
@@ -269,6 +283,13 @@
                         "type": "bool",
                         "default": true
                     },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": true
+                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
@@ -278,7 +299,7 @@
                         ]
                     },
                     "uin": {
-                        "description": "绑定 QQ 号（UIN）",
+                        "description": "绑定 QQ 号",
                         "hint": "必填。填写 QQ 音乐绿钻绑定的 QQ 号，用于搜索接口鉴权；未填写时该音源不会返回搜索结果。",
                         "type": "string",
                         "default": "10001"
@@ -292,6 +313,104 @@
                     "proxy": {
                         "description": "代理地址",
                         "hint": "此地址仅用于该音源的网络请求；留空表示直连。示例：http://127.0.0.1:7890。",
+                        "type": "string",
+                        "default": ""
+                    }
+                }
+            },
+            "kugou": {
+                "name": "酷狗音乐",
+                "items": {
+                    "priority": {
+                        "description": "优先级",
+                        "type": "int",
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
+                        "default": 5
+                    },
+                    "enable": {
+                        "description": "启用此音源",
+                        "type": "bool",
+                        "default": true
+                    },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": true
+                    },
+                    "trigger_words": {
+                        "description": "触发词",
+                        "hint": "直接通过酷狗音乐接口搜索和播放的点歌触发词。",
+                        "type": "list",
+                        "default": [
+                            "酷狗点歌"
+                        ]
+                    },
+                    "cookies": {
+                        "description": "酷狗 Cookies",
+                        "hint": "可选。提供酷狗登录态以访问受限歌曲",
+                        "type": "text",
+                        "default": ""
+                    },
+                    "proxy": {
+                        "description": "代理地址",
+                        "type": "string",
+                        "default": ""
+                    }
+                }
+            },
+            "kugou_api": {
+                "name": "酷狗音乐API版",
+                "items": {
+                    "priority": {
+                        "description": "优先级",
+                        "type": "int",
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
+                        "default": 4
+                    },
+                    "enable": {
+                        "description": "启用此音源",
+                        "type": "bool",
+                        "default": true
+                    },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": true
+                    },
+                    "trigger_words": {
+                        "description": "触发词",
+                        "hint": "使用 KuGouMusicApi 搜索酷狗音乐的点歌触发词。",
+                        "type": "list",
+                        "default": [
+                            "酷狗api点歌"
+                        ]
+                    },
+                    "base_url": {
+                        "description": "KuGouMusicApi 地址",
+                        "hint": "KuGouMusicApi 服务的根 URL，例如 http://127.0.0.1:3000。",
+                        "type": "string",
+                        "default": "http://127.0.0.1:3000"
+                    },
+                    "cookies": {
+                        "description": "酷狗 Cookies",
+                        "hint": "可选。KuGouMusicApi 搜索接口需要认证时填写酷狗 Cookie。",
+                        "type": "text",
+                        "default": ""
+                    },
+                    "proxy": {
+                        "description": "代理地址",
                         "type": "string",
                         "default": ""
                     }
@@ -314,6 +433,13 @@
                     "enable": {
                         "description": "启用此音源",
                         "hint": "关闭后此音源不会参与命令匹配或搜索。",
+                        "type": "bool",
+                        "default": true
+                    },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
                         "type": "bool",
                         "default": true
                     },
@@ -408,6 +534,13 @@
                         "type": "bool",
                         "default": true
                     },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": false
+                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
@@ -430,7 +563,7 @@
                     }
                 }
             },
-            "apple_music": {
+            "apple": {
                 "name": "Apple Music",
                 "items": {
                     "priority": {
@@ -449,6 +582,13 @@
                         "hint": "关闭后此音源不会参与命令匹配或搜索。",
                         "type": "bool",
                         "default": true
+                    },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": false
                     },
                     "trigger_words": {
                         "description": "触发词",
