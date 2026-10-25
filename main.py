@@ -41,6 +41,11 @@ class MusicPlugin(Star):
     async def initialize(self):
         self._register_player()
 
+    @filter.on_platform_loaded()
+    async def _on_platform_loaded(self) -> None:
+        """Register QQ interaction handling before the platform starts."""
+        self.sender.set_interaction_create()
+
     async def terminate(self):
         await self.qqmusic_login.close()
         await self.kugou_login.close()

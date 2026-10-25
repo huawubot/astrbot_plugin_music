@@ -61,15 +61,13 @@ class MusicSender:
         self._selection_contexts: dict[str, dict[str, Any]] = {}
         self._selection_context_ids: dict[str, str] = {}
         self._interaction_clients: set[int] = set()
-        self.interaction_created: bool = False
 
     async def close(self) -> None:
         """Release resources owned by the sender."""
         await self.ark_card.close()
 
     def set_interaction_create(self):
-        if self.interaction_created:
-            return
+        """Register interaction intents and handlers for current QQ clients."""
         for platform in self.context.platform_manager.get_insts():
             if not isinstance(platform, QQOfficialPlatformAdapter):
                 continue
@@ -82,6 +80,9 @@ class MusicSender:
                 client.intents = intents | (1 << 25) | (1 << 26)
             elif intents is not None:
                 intents.interaction = True
+            platform_intents = getattr(platform, "intents", None)
+            if platform_intents is not None:
+                platform_intents.interaction = True
 
             previous_handler = getattr(client, "on_interaction_create", None)
 
@@ -96,7 +97,6 @@ class MusicSender:
 
             setattr(client, "on_interaction_create", on_interaction_create)
             self._interaction_clients.add(client_id)
-        self.interaction_created = True
 
     @staticmethod
     def _format_time(duration_ms):
