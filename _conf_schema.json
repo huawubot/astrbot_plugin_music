@@ -444,7 +444,7 @@
                         "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
-                        "default": false
+                        "default": true
                     },
                     "trigger_words": {
                         "description": "触发词",

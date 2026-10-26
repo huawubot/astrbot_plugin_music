@@ -61,7 +61,7 @@
   },
   {
     "__template_key": "kuwo",
-    "support_card": false,
+    "support_card": true,
     "enable": true,
     "priority": 50,
     "trigger_words": [
