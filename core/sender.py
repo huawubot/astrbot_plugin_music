@@ -479,27 +479,25 @@ class MusicSender:
             "qqmusic": "qq",
             "netease": "163",
             "netease_api": "163",
-            "netease_nodejs": "163",
             "kugou": "kugou",
             "kugou_api": "kugou",
             "kuwo": "kuwo",
             "migu": "migu",
         }.get(source)
-
-        if native_type is not None:
-            music_data = {"type": native_type, "id": str(song.id)}
-        elif song.audio_url:
-            music_data = {
-                "type": "custom",
-                "url": song.page_url or song.audio_url,
-                "audio": song.audio_url,
-                "title": song.name or "",
-                "singer": song.artists or "",
-                "image": song.cover_url or "",
-            }
-        else:
+        # 原生卡片实测支持性太差，故注释掉
+        # if native_type is not None:
+        #     music_data = {"type": native_type, "id": str(song.id)}
+        if not song.audio_url:
             logger.warning(f"Cannot send a music card without audio URL: {source}")
             return False
+        music_data = {
+            "type": native_type or "custom",
+            "url": song.page_url or song.audio_url,
+            "audio": song.audio_url,
+            "title": song.name or "",
+            "singer": song.artists or "",
+            "image": song.cover_url or "",
+        }
 
         payloads = {"message": [{"type": "music", "data": music_data}]}
         try:

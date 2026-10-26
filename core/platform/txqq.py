@@ -96,3 +96,36 @@ class TXQQMusic(BaseMusicPlayer):
                 )
             )
         return songs[:limit]
+
+    async def fetch_extra(self, song: Song) -> Song:
+        """Return a TXQQ result because search already provides its metadata.
+
+        Args:
+            song: TXQQ song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song
+
+    async def fetch_comments(self, song: Song) -> Song:
+        """Return the song because TXQQ comments are not normalized here.
+
+        Args:
+            song: TXQQ song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song
+
+    async def fetch_lyrics(self, song: Song) -> Song:
+        """Return the song because TXQQ lyrics are not normalized here.
+
+        Args:
+            song: TXQQ song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song

@@ -149,3 +149,14 @@ class KuGouMusicAPI(BaseMusicPlayer):
         if isinstance(body, dict):
             song.lyrics = body.get("decodeContent") or body.get("content")
         return song
+
+    async def fetch_comments(self, song: Song) -> Song:
+        """Return the song because the KuGou API adapter has no comments endpoint.
+
+        Args:
+            song: KuGou song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song

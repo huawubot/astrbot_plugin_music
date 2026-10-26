@@ -88,3 +88,36 @@ class AppleMusic(BaseMusicPlayer):
             if songs:
                 return songs
         return []
+
+    async def fetch_extra(self, song: Song) -> Song:
+        """Return an Apple result because search already provides its metadata.
+
+        Args:
+            song: Apple song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song
+
+    async def fetch_comments(self, song: Song) -> Song:
+        """Return the song because Apple does not provide comments here.
+
+        Args:
+            song: Apple song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song
+
+    async def fetch_lyrics(self, song: Song) -> Song:
+        """Return the song because Apple lyrics are unavailable here.
+
+        Args:
+            song: Apple song returned by search.
+
+        Returns:
+            The unchanged song.
+        """
+        return song
