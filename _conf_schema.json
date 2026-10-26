@@ -80,6 +80,7 @@
                     "text(文本模式)"
                 ],
                 "default": [
+                    "card(卡片模式)",
                     "ark_card(签名卡片)",
                     "record_local(本地语音)",
                     "record_link(语音链接)",

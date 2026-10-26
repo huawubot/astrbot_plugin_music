@@ -54,6 +54,7 @@ class NetEaseMusicAPI(BaseMusicPlayer):
             parsed_songs.append(
                 Song(
                     id=str(item.get("id") or ""),
+                    source=self.platform.name,
                     name=item.get("name"),
                     artists="、".join(
                         artist["name"]
