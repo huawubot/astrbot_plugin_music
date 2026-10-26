@@ -124,11 +124,12 @@ class MusicPlugin(Star):
     @filter.event_message_type(filter.EventMessageType.ALL)
     async def on_search_song(self, event: AstrMessageEvent):
         """根据音源触发词路由歌曲搜索。"""
-        # 解析参数
+        if not event.is_at_or_wake_command:
+            return
         cmd, _, arg = event.message_str.partition(" ")
         if not arg:
             return
-        if not event.is_at_or_wake_command and cmd.lower() not in self.keywords:
+        if cmd.lower() not in self.keywords:
             return
         is_generic_search = cmd.lower() == "点歌"
         route = None if is_generic_search else self.trigger_routes.get(cmd.lower())

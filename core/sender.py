@@ -473,26 +473,33 @@ class MusicSender:
         self, event: AiocqhttpMessageEvent, player: BaseMusicPlayer, song: Song
     ) -> bool:
         """发卡片"""
-        if song.audio_url:
+        source = (song.source or player.platform.name).strip().lower()
+        native_type = {
+            "qq": "qq",
+            "qqmusic": "qq",
+            "netease": "163",
+            "netease_api": "163",
+            "netease_nodejs": "163",
+            "kugou": "kugou",
+            "kugou_api": "kugou",
+            "kuwo": "kuwo",
+            "migu": "migu",
+        }.get(source)
+
+        if native_type is not None:
+            music_data = {"type": native_type, "id": str(song.id)}
+        elif song.audio_url:
             music_data = {
                 "type": "custom",
                 "url": song.page_url or song.audio_url,
                 "audio": song.audio_url,
                 "title": song.name or "",
-                "content": song.artists or "",
+                "singer": song.artists or "",
                 "image": song.cover_url or "",
             }
         else:
-            source = (song.source or player.platform.name).lower()
-            if source in {"qq", "qqmusic"}:
-                music_data = {"type": "qq", "id": song.id}
-            elif source in {"netease", "netease_nodejs"}:
-                music_data = {"type": "163", "id": song.id}
-            else:
-                logger.warning(
-                    f"Cannot send a native music card without audio URL: {source}"
-                )
-                return False
+            logger.warning(f"Cannot send a music card without audio URL: {source}")
+            return False
 
         payloads = {"message": [{"type": "music", "data": music_data}]}
         try:
