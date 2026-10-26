@@ -220,7 +220,35 @@ class PluginConfig(ConfigNode):
             except Exception as exc:
                 logger.error(f"[music] failed to load platform template: {exc}")
 
+        if self._normalize_player_priorities():
+            self.save_config()
+
         self._players = MusicPlayerConfig(self.players_template)
+
+    def _normalize_player_priorities(self) -> bool:
+        """Make player priorities unique and sort the configured players.
+
+        Returns:
+            Whether the player configuration changed.
+        """
+        used_priorities: set[int] = set()
+        config_changed = False
+        for player in self.players_template:
+            priority = player["priority"]
+            if priority in used_priorities:
+                while priority in used_priorities:
+                    priority += 1
+                player["priority"] = priority
+                config_changed = True
+            used_priorities.add(priority)
+
+        sorted_players = sorted(
+            self.players_template, key=lambda player: player["priority"]
+        )
+        if sorted_players != self.players_template:
+            self.players_template[:] = sorted_players
+            config_changed = True
+        return config_changed
 
     @property
     def players(self) -> MusicPlayerConfig:

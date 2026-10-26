@@ -16,7 +16,7 @@
     "__template_key": "netease_api",
     "support_card": true,
     "enable": true,
-    "priority": 2,
+    "priority": 10,
     "trigger_words": [
       "NJ点歌"
     ],
@@ -29,7 +29,7 @@
     "__template_key": "qqmusic",
     "support_card": true,
     "enable": true,
-    "priority": 3,
+    "priority": 20,
     "trigger_words": [
       "QQ点歌"
     ],
@@ -41,7 +41,7 @@
     "__template_key": "kugou",
     "support_card": true,
     "enable": true,
-    "priority": 4,
+    "priority": 30,
     "trigger_words": [
       "酷狗点歌"
     ],
@@ -52,7 +52,7 @@
     "__template_key": "kugou_api",
     "support_card": true,
     "enable": true,
-    "priority": 5,
+    "priority": 40,
     "trigger_words": [
       "酷狗api点歌"
     ],
@@ -63,7 +63,7 @@
     "__template_key": "kuwo",
     "support_card": false,
     "enable": true,
-    "priority": 6,
+    "priority": 50,
     "trigger_words": [
       "酷我点歌"
     ],
@@ -73,7 +73,7 @@
     "__template_key": "txqq",
     "support_card": true,
     "enable": true,
-    "priority": 7,
+    "priority": 60,
     "trigger_words": [
       "TXQQ点歌:qq",
       "网易云音乐:netease",
@@ -97,7 +97,7 @@
     "__template_key": "neko",
     "support_card": false,
     "enable": true,
-    "priority": 8,
+    "priority": 70,
     "trigger_words": [
       "Neko点歌"
     ],
@@ -108,7 +108,7 @@
     "__template_key": "apple",
     "support_card": false,
     "enable": true,
-    "priority": 9,
+    "priority": 80,
     "trigger_words": [
       "苹果点歌"
     ],

@@ -142,11 +142,11 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
                         "default": 1
@@ -206,14 +206,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 2
+                        "default": 10
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -268,14 +268,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 3
+                        "default": 20
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -323,13 +323,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 5
+                        "default": 30
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -369,13 +370,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 4
+                        "default": 40
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -421,14 +423,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 6
+                        "default": 50
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -464,14 +466,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 4
+                        "default": 60
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -562,14 +564,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 5
+                        "default": 70
                     },
                     "enable": {
                         "description": "启用此音源",
@@ -611,14 +613,14 @@
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
                         "type": "int",
                         "slider": {
                             "min": 1,
-                            "max": 10,
+                            "max": 100,
                             "step": 1
                         },
-                        "default": 6
+                        "default": 80
                     },
                     "enable": {
                         "description": "启用此音源",
