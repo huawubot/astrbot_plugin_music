@@ -495,7 +495,7 @@ class MusicSender:
             "url": song.page_url or song.audio_url,
             "audio": song.audio_url,
             "title": song.name or "",
-            "singer": song.artists or "",
+            "content": song.artists or "",
             "image": song.cover_url or "",
         }
 

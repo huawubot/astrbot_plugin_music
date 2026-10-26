@@ -224,26 +224,97 @@ class KuwoMusic(BaseMusicPlayer):
         return song
 
     async def fetch_lyrics(self, song: Song) -> Song:
-        """Return the song unchanged because Kuwo has no lyrics endpoint here.
+        """Fetch LRC lyrics from Kuwo's lyrics endpoint.
 
         Args:
-            song: Song to leave unchanged.
+            song: Kuwo song whose lyrics should be fetched.
 
         Returns:
-            The original song.
+            The song with LRC lyrics populated when Kuwo provides them.
         """
+        if song.lyrics or not song.id:
+            return song
+
+        try:
+            result = await self._request(
+                f"https://www.kuwo.cn/openapi/v1/www/lyric/getlyric?"
+                f"{urlencode({'musicId': song.id})}"
+            )
+        except Exception as exc:
+            logger.warning(f"Kuwo lyrics request failed: {exc}")
+            return song
+
+        lyric_data = result.get("data") if isinstance(result, dict) else None
+        lyric_lines = (
+            lyric_data.get("lrclist") if isinstance(lyric_data, dict) else None
+        )
+        if not isinstance(lyric_lines, list):
+            return song
+
+        lrc: list[str] = []
+        for item in lyric_lines:
+            if not isinstance(item, dict):
+                continue
+            text = item.get("lineLyric")
+            time_value = item.get("time")
+            if not isinstance(time_value, (int, float, str)) or isinstance(
+                time_value, bool
+            ):
+                continue
+            try:
+                seconds = float(time_value)
+            except (TypeError, ValueError):
+                continue
+            if not isinstance(text, str) or not text.strip() or seconds < 0:
+                continue
+
+            minutes, remainder = divmod(int(seconds * 100), 6000)
+            lrc.append(f"[{minutes:02d}:{remainder / 100:05.2f}]{text}")
+
+        if lrc:
+            song.lyrics = "\n".join(lrc)
         return song
 
     async def fetch_comments(self, song: Song) -> Song:
-        """Return the song unchanged because Kuwo has no comments endpoint here.
+        """Fetch popular comments from Kuwo's comment endpoint.
 
         Args:
-            song: Song to leave unchanged.
+            song: Kuwo song whose popular comments should be fetched.
 
         Returns:
-            The original song.
+            The song with comments populated when Kuwo provides them.
         """
+        if song.comments or not song.id:
+            return song
+
+        params = {
+            "f": "web",
+            "type": "get_rec_comment",
+            "isadd": 1,
+            "aapiver": 1,
+            "uid": "",
+            "digest": 15,
+            "sid": song.id,
+            "start": 0,
+            "count": 20,
+        }
+        try:
+            result = await self._request(
+                f"http://ncomment.kuwo.cn/com.s?{urlencode(params)}"
+            )
+        except Exception as exc:
+            logger.warning(f"Kuwo comments request failed: {exc}")
+            return song
+
+        comment_list = result.get("hot_comments") if isinstance(result, dict) else None
+        if isinstance(comment_list, list):
+            song.comments = [
+                {
+                    "content": item.get("msg", ""),
+                    "nickname": item.get("u_name", ""),
+                    "likedCount": item.get("like_num", 0),
+                }
+                for item in comment_list
+                if isinstance(item, dict) and item.get("msg")
+            ] or None
         return song
-
-
-KuWoMusic = KuwoMusic
