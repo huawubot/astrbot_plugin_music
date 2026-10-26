@@ -2,6 +2,7 @@ from .apple import AppleMusic
 from .base import BaseMusicPlayer
 from .kugou import KuGouMusic
 from .kugou_api import KuGouMusicAPI
+from .kuwo import KuwoMusic
 from .neko import NekoMusic
 from .netease import NetEaseMusic
 from .netease_api import NetEaseMusicAPI
@@ -15,6 +16,7 @@ __all__ = [
     "QQMusic",
     "KuGouMusicAPI",
     "KuGouMusic",
+    "KuwoMusic",
     "TXQQMusic",
     "NekoMusic",
     "AppleMusic",
