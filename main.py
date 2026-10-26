@@ -1,3 +1,4 @@
+import shlex
 import traceback
 
 from astrbot.api import logger
@@ -246,33 +247,124 @@ class MusicPlugin(Star):
 
     @filter.command("查歌词", alias={"查看歌词"})
     async def query_lyrics(self, event: AstrMessageEvent, song_name: str):
-        """查歌词 <搜索词>"""
-        player = self.get_player(default=True)
-        if not player:
-            yield event.plain_result("无可用播放器")
+        """查歌词 <歌名> [-歌手] [-音源]"""
+        try:
+            args = shlex.split(song_name)
+        except ValueError:
+            yield event.plain_result(
+                "参数格式无效，请使用：查歌词 歌名 [-歌手] [-音源]"
+            )
             return
-        songs = await player.fetch_songs(keyword=song_name, limit=1)
-        if not songs:
-            yield event.plain_result("没找到相关歌曲")
+
+        artist_parts = []
+        requested_platform = ""
+        while args and args[-1].startswith("-"):
+            option = args.pop()[1:]
+            if not option:
+                continue
+            if self.get_player(name=option):
+                requested_platform = option
+            else:
+                artist_parts.insert(0, option)
+
+        query = " ".join(args).strip()
+        if not query:
+            yield event.plain_result("请提供要查询的歌名")
             return
-        await self.sender.send_lyrics(event, player, songs[0])
+        selected_player = (
+            self.get_player(name=requested_platform) if requested_platform else None
+        )
+        if requested_platform and not selected_player:
+            yield event.plain_result(f"音源“{requested_platform}”不可用")
+            return
+        candidate_players = self.get_players_by_priority()
+        if selected_player:
+            candidate_players = [selected_player] + [
+                player for player in candidate_players if player is not selected_player
+            ]
+
+        for player in candidate_players:
+            try:
+                songs = await player.fetch_songs(
+                    keyword=query, limit=self.cfg.search_config.song_limit
+                )
+            except Exception as exc:
+                logger.warning(
+                    f"Lyrics search via {player.platform.name} failed: {exc}"
+                )
+                continue
+            song = pick_best_song(query, songs, artist=" ".join(artist_parts))
+            if not song:
+                continue
+            try:
+                await player.fetch_lyrics(song)
+                if song.lyrics:
+                    await player.resolve_lyrics(song)
+            except Exception as exc:
+                logger.warning(f"Lyrics fetch via {player.platform.name} failed: {exc}")
+                continue
+            if song.lyrics:
+                await self.sender.send_lyrics(event, player, song)
+                return
+        yield event.plain_result("未找到匹配的歌曲或歌词")
 
     @filter.llm_tool()
-    async def query_lyrics_by_name(self, event: AstrMessageEvent, song_name: str):
-        """当用户想查看歌词时，根据歌名（可含歌手）搜索并发送歌词图片。
+    async def query_lyrics_by_name(
+        self,
+        event: AstrMessageEvent,
+        song_name: str,
+        platform: str = "",
+        artist: str = "",
+    ):
+        """根据歌名搜索歌词，可指定歌手和优先音源。
 
         Args:
-            song_name(string): 歌曲名称或包含歌手的关键词
+            song_name(string): 歌曲名称或搜索关键词，可包含歌手名。
+            platform(string): 优先使用的音源标识或显示名称；未找到匹配歌曲或歌词时，
+                会按音源优先级尝试其他已启用音源。
+            artist(string): 可选歌手名；填写后只接受歌手匹配的搜索结果。
         """
-        player = self.get_player(default=True)
-        if not player:
-            return "无可用播放器"
-        songs = await player.fetch_songs(keyword=song_name, limit=1)
-        if not songs:
-            return "没找到相关歌曲"
-        sent = await self.sender.send_lyrics(event, player, songs[0])
-        if not sent:
-            return "歌词获取或发送失败"
+        requested_platform = platform.strip()
+        selected_player = (
+            self.get_player(name=requested_platform) if requested_platform else None
+        )
+        if requested_platform and not selected_player:
+            return f"音源“{requested_platform}”不可用"
+        candidate_players = self.get_players_by_priority()
+        if selected_player:
+            candidate_players = [selected_player] + [
+                player for player in candidate_players if player is not selected_player
+            ]
+
+        for player in candidate_players:
+            try:
+                songs = await player.fetch_songs(
+                    keyword=song_name, limit=self.cfg.search_config.song_limit
+                )
+            except Exception as exc:
+                logger.warning(
+                    f"Lyrics search via {player.platform.name} failed: {exc}"
+                )
+                continue
+            song = pick_best_song(song_name, songs, artist=artist)
+            if not song:
+                continue
+            try:
+                await player.fetch_lyrics(song)
+                if song.lyrics:
+                    await player.resolve_lyrics(song)
+            except Exception as exc:
+                logger.warning(f"Lyrics fetch via {player.platform.name} failed: {exc}")
+                continue
+            if song.lyrics:
+                await self.sender.send_lyrics(event, player, song)
+                return (
+                    f"音源：{player.platform.display_name}({player.platform.name})\n "
+                    f"歌曲：{song.name}\n"
+                    f"作者：{song.artists}\n"
+                    f"歌词：\n{song.lyrics}"
+                )
+        return "未找到匹配的歌曲或歌词"
 
     @filter.llm_tool()
     async def play_song_by_name(
