@@ -1,0 +1,249 @@
+import asyncio
+import re
+import secrets
+import string
+from typing import ClassVar
+from urllib.parse import urlencode
+
+from astrbot.api import logger
+
+from ..model import Platform, Song
+from .base import BaseMusicPlayer
+
+
+class KuwoMusic(BaseMusicPlayer):
+    """Search Kuwo and resolve playable track URLs."""
+
+    platform: ClassVar[Platform] = Platform(
+        name="kuwo",
+        display_name="酷我音乐",
+    )
+
+    SEARCH_URL = "http://search.kuwo.cn/r.s"
+    TRACK_URL = "https://changenotice.kuwo.cn/mobi.s"
+    DETAIL_URL = "http://musicpay.kuwo.cn/music.pay"
+    SEARCH_API_URL = SEARCH_URL
+    TRACK_API_URL = TRACK_URL
+    DETAIL_API_URL = DETAIL_URL
+    TRACK_SOURCE = "kwplayer_ar_8.5.5.0_keluze.apk"
+    TRACK_BITRATE = "128kmp3"
+    TRACK_USER_ALPHABET = string.ascii_lowercase + string.digits
+    TRACK_USER_LENGTH = 16
+    COVER_BASE_URL = "http://img1.kwcdn.kuwo.cn/star/albumcover/"
+    MUSICRID_PATTERN = re.compile(r"(?:MUSIC_)?(?P<id>\d+)$", re.IGNORECASE)
+
+    async def fetch_songs(
+        self,
+        keyword: str,
+        limit: int,
+        extra: str | None = None,
+    ) -> list[Song]:
+        """Search Kuwo's public search endpoint.
+
+        Args:
+            keyword: Song or artist search text.
+            limit: Maximum number of songs to return.
+            extra: Unused platform-specific command context.
+
+        Returns:
+            Matching Kuwo songs.
+        """
+        del extra
+        limit = max(1, limit)
+        params = {
+            "allpay": 1,
+            "all": keyword,
+            "pn": 0,
+            "rn": limit,
+            "vipver": 1,
+            "show_copyright_off": 1,
+            "correct": 1,
+            "ft": "music",
+            "encoding": "utf8",
+            "rformat": "json",
+            "vermerge": 1,
+            "mobi": 1,
+            "issubtitle": 1,
+        }
+        try:
+            result = await self._request(
+                f"{self.SEARCH_URL}?{urlencode(params)}",
+                headers={
+                    **self.HEADERS,
+                    "Accept": "application/json, text/plain, */*",
+                },
+            )
+        except Exception as exc:
+            logger.warning(f"Kuwo search request failed: {exc}")
+            return []
+
+        items = result.get("abslist") if isinstance(result, dict) else None
+        if not isinstance(items, list):
+            logger.warning("Kuwo search returned an invalid result list")
+            return []
+
+        songs: list[Song] = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            raw_id = str(item.get("MUSICRID") or item.get("musicrid") or "").strip()
+            match = self.MUSICRID_PATTERN.fullmatch(raw_id)
+            if not match:
+                continue
+
+            duration = item.get("DURATION") or item.get("duration")
+            duration_ms: int | None = None
+            try:
+                if isinstance(duration, str) and ":" in duration:
+                    minutes, seconds = duration.split(":", 1)
+                    duration_ms = (int(minutes) * 60 + int(seconds)) * 1000
+                elif duration is not None:
+                    duration_ms = int(float(duration) * 1000)
+            except (TypeError, ValueError):
+                logger.debug(f"Kuwo returned an invalid duration: {duration!r}")
+
+            cover = item.get("web_albumpic_short") or item.get("web_album_cover_short")
+            if isinstance(cover, str):
+                cover = cover.strip()
+                if cover.startswith("//"):
+                    cover = f"https:{cover}"
+                elif cover and not cover.startswith(("http://", "https://")):
+                    cover = f"{self.COVER_BASE_URL}{cover.lstrip('/')}"
+            else:
+                cover = None
+
+            song_id = match.group("id")
+            songs.append(
+                Song(
+                    id=song_id,
+                    source=self.platform.name,
+                    name=item.get("NAME") or item.get("name") or "Unknown song",
+                    artists=item.get("ARTIST") or item.get("artist") or "",
+                    duration=duration_ms,
+                    cover_url=cover or None,
+                    page_url=f"https://www.kuwo.cn/play_detail/{song_id}",
+                    note=item.get("ALBUM") or item.get("album") or None,
+                )
+            )
+            if len(songs) >= limit:
+                break
+        return songs
+
+    async def fetch_extra(self, song: Song) -> Song:
+        """Resolve a Kuwo direct audio URL and enrich track metadata.
+
+        Args:
+            song: Song returned by :meth:`fetch_songs`.
+
+        Returns:
+            The song with any available playback and detail metadata.
+        """
+        if song.audio_url:
+            return song
+
+        track_params = {
+            "f": "web",
+            "source": self.TRACK_SOURCE,
+            "type": "convert_url_with_sign",
+            "rid": song.id,
+            "br": self.TRACK_BITRATE,
+            "user": "".join(
+                secrets.choice(self.TRACK_USER_ALPHABET)
+                for _ in range(self.TRACK_USER_LENGTH)
+            ),
+        }
+        detail_params = {
+            "src": "kwplayer_ar_11.3.1.1_40.apk",
+            "op": "query",
+            "action": "play",
+            "ids": song.id,
+        }
+
+        try:
+            track_result, detail_result = await asyncio.gather(
+                self._request(f"{self.TRACK_URL}?{urlencode(track_params)}"),
+                self._request(f"{self.DETAIL_URL}?{urlencode(detail_params)}"),
+                return_exceptions=True,
+            )
+        except Exception as exc:
+            logger.warning(f"Kuwo media request failed: {exc}")
+            return song
+
+        if isinstance(track_result, Exception):
+            logger.warning(f"Kuwo track request failed: {track_result}")
+            track_result = None
+        if isinstance(detail_result, Exception):
+            logger.debug(f"Kuwo detail request failed: {detail_result}")
+            detail_result = None
+
+        track_data = (
+            track_result.get("data")
+            if isinstance(track_result, dict) and str(track_result.get("code")) == "200"
+            else None
+        )
+        if isinstance(track_data, dict):
+            audio_url = track_data.get("url")
+            if isinstance(audio_url, str) and audio_url:
+                song.audio_url = audio_url.split("?", 1)[0]
+            if not song.duration:
+                duration_value = track_data.get("duration")
+                if isinstance(duration_value, (int, float, str)) and not isinstance(
+                    duration_value, bool
+                ):
+                    try:
+                        song.duration = int(float(duration_value)) * 1000
+                    except (TypeError, ValueError):
+                        pass
+        else:
+            logger.warning(f"Kuwo did not return an audio URL for song {song.id}")
+
+        detail_songs = (
+            detail_result.get("songs")
+            if isinstance(detail_result, dict)
+            and str(detail_result.get("errorcode")) == "0"
+            and str(detail_result.get("result", "")).lower() == "ok"
+            else None
+        )
+        detail = (
+            detail_songs[0] if isinstance(detail_songs, list) and detail_songs else None
+        )
+        if isinstance(detail, dict):
+            song.name = detail.get("name") or song.name
+            song.artists = detail.get("artist") or song.artists
+            song.note = detail.get("album") or song.note
+            song.cover_url = detail.get("albumPic") or song.cover_url
+            if not song.duration:
+                duration_value = detail.get("duration")
+                if isinstance(duration_value, (int, float, str)) and not isinstance(
+                    duration_value, bool
+                ):
+                    try:
+                        song.duration = int(float(duration_value)) * 1000
+                    except (TypeError, ValueError):
+                        pass
+        return song
+
+    async def fetch_lyrics(self, song: Song) -> Song:
+        """Return the song unchanged because Kuwo has no lyrics endpoint here.
+
+        Args:
+            song: Song to leave unchanged.
+
+        Returns:
+            The original song.
+        """
+        return song
+
+    async def fetch_comments(self, song: Song) -> Song:
+        """Return the song unchanged because Kuwo has no comments endpoint here.
+
+        Args:
+            song: Song to leave unchanged.
+
+        Returns:
+            The original song.
+        """
+        return song
+
+
+KuWoMusic = KuwoMusic

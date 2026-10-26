@@ -159,7 +159,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": true
@@ -223,7 +223,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": true
@@ -285,7 +285,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": true
@@ -338,7 +338,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": true
@@ -384,7 +384,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": true
@@ -416,6 +416,49 @@
                     }
                 }
             },
+            "kuwo": {
+                "name": "酷我音乐",
+                "items": {
+                    "priority": {
+                        "description": "优先级",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。优先级相同时按音源配置顺序。",
+                        "type": "int",
+                        "slider": {
+                            "min": 1,
+                            "max": 10,
+                            "step": 1
+                        },
+                        "default": 6
+                    },
+                    "enable": {
+                        "description": "启用此音源",
+                        "hint": "关闭后此音源不会参与命令匹配或搜索。",
+                        "type": "bool",
+                        "default": true
+                    },
+                    "support_card": {
+                        "description": "支持卡片",
+                        "hint": "是否支持以签名卡片形式发歌",
+                        "invisible": true,
+                        "type": "bool",
+                        "default": false
+                    },
+                    "trigger_words": {
+                        "description": "触发词",
+                        "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
+                        "type": "list",
+                        "default": [
+                            "酷我点歌"
+                        ]
+                    },
+                    "proxy": {
+                        "description": "代理地址",
+                        "hint": "此地址用于酷我搜索、详情和歌曲直链请求；留空表示直连。示例：http://127.0.0.1:7890。",
+                        "type": "string",
+                        "default": ""
+                    }
+                }
+            },
             "txqq": {
                 "name": "TXQQ 聚合音源",
                 "items": {
@@ -438,7 +481,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": true
@@ -536,7 +579,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": false
@@ -585,7 +628,7 @@
                     },
                     "support_card": {
                         "description": "支持卡片",
-                        "hint": "关闭后，此音源的搜索结果不会以卡片方式显示。",
+                        "hint": "是否支持以签名卡片形式发歌",
                         "invisible": true,
                         "type": "bool",
                         "default": false

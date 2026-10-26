@@ -157,24 +157,12 @@ class MusicPlayerConfig(ConfigNodeContainer):
     qqmusic: MusicPlayerItem
     kugou: MusicPlayerItem
     kugou_api: MusicPlayerItem
+    kuwo: MusicPlayerItem
     txqq: MusicPlayerItem
     neko: MusicPlayerItem
     apple: MusicPlayerItem
-    CARD_SUPPORTED_PLATFORMS = {
-        "netease",
-        "netease_api",
-        "qqmusic",
-        "kugou",
-        "kugou_api",
-        "txqq",
-    }
 
     def __init__(self, nodes: list[dict[str, Any]]):
-        for node in nodes:
-            node.setdefault(
-                "support_card",
-                node.get("__template_key") in self.CARD_SUPPORTED_PLATFORMS,
-            )
         super().__init__(nodes, item_cls=MusicPlayerItem)
 
     def platforms(self) -> list[str]:
