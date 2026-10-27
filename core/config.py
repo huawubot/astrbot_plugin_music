@@ -219,6 +219,17 @@ class PluginConfig(ConfigNode):
             except Exception as exc:
                 logger.error(f"[music] failed to load platform template: {exc}")
 
+        supported_players = MusicPlayerConfig._fields()
+        configured_players = [
+            player
+            for player in self.players_template
+            if player.get("__template_key") in supported_players
+        ]
+        if len(configured_players) != len(self.players_template):
+            logger.warning("[music] removed configurations for unknown platforms")
+            self.players_template[:] = configured_players
+            self.save_config()
+
         if self._normalize_player_priorities():
             self.save_config()
 
