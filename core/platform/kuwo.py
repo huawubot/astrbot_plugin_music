@@ -308,7 +308,7 @@ class KuwoMusic(BaseMusicPlayer):
                             if is_mflac:
                                 decrypted_path = file_path.with_suffix(".flac")
                                 try:
-                                    from nonebot_plugin_kuwo.qmc import (
+                                    from nonebot_plugin_kuwo.qmc import (  # type: ignore
                                         decrypt_mflac_file,
                                     )
 

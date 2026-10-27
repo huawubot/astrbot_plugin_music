@@ -294,6 +294,7 @@ class NekoMusic(BaseMusicPlayer):
                 Song(
                     id=song_id,
                     source=self.platform.name,
+                    card_type="qq",
                     name=item.get("name", item.get("title")),
                     artists=str(artists) if artists else None,
                     duration=int(duration)

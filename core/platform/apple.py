@@ -73,6 +73,7 @@ class AppleMusic(BaseMusicPlayer):
                     Song(
                         id=str(track.get("trackId") or track.get("collectionId") or ""),
                         source=self.platform.name,
+                        card_type="qq",
                         name=track.get("trackName"),
                         artists=track.get("artistName"),
                         duration=track.get("trackTimeMillis"),
