@@ -594,6 +594,10 @@
                         "default": ""
                     }
                 }
+            },
+            "netease_nodejs": {
+                "name": "已废弃音源",
+                "items": {}
             }
         }
     }
