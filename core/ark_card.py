@@ -14,16 +14,8 @@ class ArkCard:
     """Fetch signed music cards from configurable Ark-compatible services."""
 
     API_URL = "https://apii.xianyuw.cn/api/v1/qq-musicArk"
-    FORMAT_MAP = {
-        "qq": "qq",
-        "qqmusic": "qq",
-        "txqq": "qq",
-        "netease": "netease",
-        "netease_api": "netease",
-        "kugou": "kugou",
-        "kugou_api": "kugou",
-        "bilibili": "bilibili",
-    }
+    FORMAT_MAP = {"163": "netease"}
+    SUPPORTED_CARD_TYPES = {"qq", "163", "kugou", "bilibili"}
     REQUIRED_FIELDS = {"app", "meta", "prompt", "view"}
 
     def __init__(self, config: PluginConfig):
@@ -73,12 +65,11 @@ class ArkCard:
             return None
         singer = song.artists or "Unknown artist"
 
-        source = (song.source or player.platform.name).lower()
         proxy = player.platform_cfg.proxy if player.platform_cfg else None
-        card_format = self.FORMAT_MAP.get(source)
-        if card_format is None:
-            logger.warning(f"Ark card does not support music source: {source}")
+        if song.card_type not in self.SUPPORTED_CARD_TYPES:
+            logger.warning(f"Ark card does not support card type: {song.card_type}")
             return None
+        card_format = self.FORMAT_MAP.get(song.card_type, song.card_type)
 
         if not song.cover_url:
             song = await player.fetch_extra(song)

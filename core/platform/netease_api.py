@@ -55,6 +55,7 @@ class NetEaseMusicAPI(BaseMusicPlayer):
                 Song(
                     id=str(item.get("id") or ""),
                     source=self.platform.name,
+                    card_type="163",
                     name=item.get("name"),
                     artists="、".join(
                         artist["name"]

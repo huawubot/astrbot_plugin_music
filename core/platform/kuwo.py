@@ -117,6 +117,7 @@ class KuwoMusic(BaseMusicPlayer):
                 Song(
                     id=song_id,
                     source=self.platform.name,
+                    card_type="kuwo",
                     name=item.get("NAME") or item.get("name") or "Unknown song",
                     artists=item.get("ARTIST") or item.get("artist") or "",
                     duration=duration_ms,

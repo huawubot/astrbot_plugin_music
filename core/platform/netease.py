@@ -66,6 +66,7 @@ class NetEaseMusic(BaseMusicPlayer):
             Song(
                 id=s.get("id"),
                 source=self.platform.name,
+                card_type="163",
                 name=s.get("name"),
                 artists="、".join(a["name"] for a in s["artists"]),
                 duration=s.get("duration"),

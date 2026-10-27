@@ -170,6 +170,7 @@ class KuGouMusic(BaseMusicPlayer):
                 Song(
                     id=song_hash,
                     source=self.platform.name,
+                    card_type="kugou",
                     name=item.get("SongName") or item.get("songname") or "未知歌曲",
                     artists=item.get("SingerName") or item.get("singername") or "",
                     duration=int(duration) * 1000 if duration else None,

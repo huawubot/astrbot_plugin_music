@@ -250,6 +250,7 @@ class QQMusic(BaseMusicPlayer):
                 Song(
                     id=str(item.get("id") or ""),
                     source=self.platform.name,
+                    card_type="qq",
                     name=item.get("name"),
                     artists=singers,
                     duration=interval * 1000 if interval else None,

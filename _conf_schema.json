@@ -158,13 +158,6 @@
                         "type": "bool",
                         "default": true
                     },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
-                        "type": "bool",
-                        "default": true
-                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
@@ -219,13 +212,6 @@
                     "enable": {
                         "description": "启用此音源",
                         "hint": "关闭后此音源不会参与命令匹配或搜索。",
-                        "type": "bool",
-                        "default": true
-                    },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
                         "type": "bool",
                         "default": true
                     },
@@ -284,13 +270,6 @@
                         "type": "bool",
                         "default": true
                     },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
-                        "type": "bool",
-                        "default": true
-                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词",
@@ -338,13 +317,6 @@
                         "type": "bool",
                         "default": true
                     },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
-                        "type": "bool",
-                        "default": true
-                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "直接通过酷狗音乐接口搜索和播放的点歌触发词。",
@@ -382,13 +354,6 @@
                     },
                     "enable": {
                         "description": "启用此音源",
-                        "type": "bool",
-                        "default": true
-                    },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
                         "type": "bool",
                         "default": true
                     },
@@ -439,13 +404,6 @@
                         "type": "bool",
                         "default": true
                     },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
-                        "type": "bool",
-                        "default": true
-                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
@@ -479,13 +437,6 @@
                     "enable": {
                         "description": "启用此音源",
                         "hint": "关闭后此音源不会参与命令匹配或搜索。",
-                        "type": "bool",
-                        "default": true
-                    },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
                         "type": "bool",
                         "default": true
                     },
@@ -580,13 +531,6 @@
                         "type": "bool",
                         "default": true
                     },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
-                        "type": "bool",
-                        "default": false
-                    },
                     "trigger_words": {
                         "description": "触发词",
                         "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
@@ -628,13 +572,6 @@
                         "hint": "关闭后此音源不会参与命令匹配或搜索。",
                         "type": "bool",
                         "default": true
-                    },
-                    "support_card": {
-                        "description": "支持卡片",
-                        "hint": "是否支持以签名卡片形式发歌",
-                        "invisible": true,
-                        "type": "bool",
-                        "default": false
                     },
                     "trigger_words": {
                         "description": "触发词",

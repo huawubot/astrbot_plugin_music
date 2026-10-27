@@ -139,7 +139,6 @@ class MusicPlayerItem(ConfigNode):
     region: str | None
     uin: str | None
     cookies: str | None
-    support_card: bool
     proxy: str | None
     enc_sec_key: str | None
     enc_params: str | None

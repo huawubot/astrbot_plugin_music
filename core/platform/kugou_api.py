@@ -84,6 +84,7 @@ class KuGouMusicAPI(BaseMusicPlayer):
                 Song(
                     id=song_hash,
                     source=self.platform.name,
+                    card_type="kugou",
                     name=item.get("songname") or item.get("FileName") or "未知歌曲",
                     artists=artists,
                     duration=int(duration) * 1000 if duration else None,

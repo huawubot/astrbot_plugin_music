@@ -88,6 +88,13 @@ class TXQQMusic(BaseMusicPlayer):
                 Song(
                     id=s.get("songid"),
                     source=platform_type,
+                    card_type={
+                        "qq": "qq",
+                        "netease": "163",
+                        "kugou": "kugou",
+                        "kuwo": "kuwo",
+                        "migu": "migu",
+                    }.get(platform_type),
                     name=s.get("title"),
                     artists=s.get("author"),
                     audio_url=s.get("url") or s.get("link"),

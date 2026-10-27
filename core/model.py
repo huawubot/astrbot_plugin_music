@@ -9,6 +9,9 @@ class Song:
     source: str | None = None
     """歌曲来源平台标识"""
 
+    card_type: str | None = None
+    """OneBot music card type, or None when cards are unavailable."""
+
     name: str | None = None
     """歌曲原始名称"""
 
