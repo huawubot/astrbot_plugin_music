@@ -387,30 +387,6 @@
             "kuwo": {
                 "name": "酷我音乐",
                 "items": {
-                    "quality": {
-                        "description": "文件音质",
-                        "hint": "仅文件模式使用此音质；语音模式固定使用标准音质。高音质不可用时会自动回退。MFLAC 解密需要安装 nonebot-plugin-kuwo Rust 扩展。",
-                        "type": "string",
-                        "options": [
-                            "standard",
-                            "exhigh",
-                            "lossless",
-                            "hires",
-                            "hifi",
-                            "sur",
-                            "jymaster"
-                        ],
-                        "labels": [
-                            "标准（128K MP3）",
-                            "较高（320K MP3）",
-                            "无损（2000K FLAC）",
-                            "Hi-Res（4000K FLAC）",
-                            "HiFi（20201K MFLAC）",
-                            "环绕声（20501K MFLAC）",
-                            "母带（20900K MFLAC）"
-                        ],
-                        "default": "standard"
-                    },
                     "priority": {
                         "description": "优先级",
                         "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
@@ -435,6 +411,30 @@
                         "default": [
                             "酷我点歌"
                         ]
+                    },
+                    "quality": {
+                        "description": "文件音质",
+                        "hint": "仅文件模式使用此音质；语音模式固定使用标准音质。高音质不可用时会自动回退。MFLAC 解密需要安装 nonebot-plugin-kuwo Rust 扩展。",
+                        "type": "string",
+                        "options": [
+                            "standard",
+                            "exhigh",
+                            "lossless",
+                            "hires",
+                            "hifi",
+                            "sur",
+                            "jymaster"
+                        ],
+                        "labels": [
+                            "标准（128K MP3）",
+                            "较高（320K MP3）",
+                            "无损（2000K FLAC）",
+                            "Hi-Res（4000K FLAC）",
+                            "HiFi（20201K MFLAC）",
+                            "环绕声（20501K MFLAC）",
+                            "母带（20900K MFLAC）"
+                        ],
+                        "default": "standard"
                     },
                     "proxy": {
                         "description": "代理地址",
