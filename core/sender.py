@@ -586,7 +586,11 @@ class MusicSender:
         if not song.audio_url:
             return False
 
-        file_path = await player.download_audio(song.audio_url)
+        download_for_file = getattr(player, "download_audio_for_file", None)
+        if download_for_file is None:
+            file_path = await player.download_audio(song.audio_url)
+        else:
+            file_path = await download_for_file(song)
         if not file_path:
             logger.error(f"【{song.name}】下载失败")
             return False

@@ -142,6 +142,7 @@ class MusicPlayerItem(ConfigNode):
     proxy: str | None
     enc_sec_key: str | None
     enc_params: str | None
+    quality: str | None
 
     @property
     def name(self) -> str:
