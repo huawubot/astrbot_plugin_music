@@ -434,7 +434,7 @@
                             "环绕声（20501K MFLAC）",
                             "母带（20900K MFLAC）"
                         ],
-                        "default": "standard"
+                        "default": "lossless"
                     },
                     "proxy": {
                         "description": "代理地址",

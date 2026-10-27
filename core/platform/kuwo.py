@@ -248,7 +248,7 @@ class KuwoMusic(BaseMusicPlayer):
         quality = (
             configured_quality.strip().lower()
             if isinstance(configured_quality, str)
-            else "standard"
+            else "lossless"
         )
         bitrate = self.QUALITY_TO_BITRATE.get(quality, self.TRACK_BITRATE)
         if bitrate != self.TRACK_BITRATE and song.id:
