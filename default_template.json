@@ -16,11 +16,21 @@
     "enable": true,
     "priority": 10,
     "trigger_words": [
-      "NJ点歌"
+      "网易api点歌"
     ],
     "base_url": "https://zm.wwoyun.cn",
     "api_token": "",
     "cookies": "",
+    "proxy": ""
+  },
+  {
+    "__template_key": "kuwo",
+    "enable": true,
+    "priority": 15,
+    "trigger_words": [
+      "酷我点歌"
+    ],
+    "quality": "lossless",
     "proxy": ""
   },
   {
@@ -55,13 +65,12 @@
     "proxy": ""
   },
   {
-    "__template_key": "kuwo",
+    "__template_key": "soda",
     "enable": true,
     "priority": 50,
     "trigger_words": [
-      "酷我点歌"
+      "汽水点歌"
     ],
-    "quality": "lossless",
     "proxy": ""
   },
   {

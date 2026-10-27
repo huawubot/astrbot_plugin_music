@@ -154,10 +154,11 @@ class MusicPlayerConfig(ConfigNodeContainer):
 
     netease: MusicPlayerItem
     netease_api: MusicPlayerItem
+    kuwo: MusicPlayerItem
     qqmusic: MusicPlayerItem
     kugou: MusicPlayerItem
     kugou_api: MusicPlayerItem
-    kuwo: MusicPlayerItem
+    soda: MusicPlayerItem
     txqq: MusicPlayerItem
     neko: MusicPlayerItem
     apple: MusicPlayerItem

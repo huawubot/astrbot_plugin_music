@@ -7,6 +7,7 @@ from .neko import NekoMusic
 from .netease import NetEaseMusic
 from .netease_api import NetEaseMusicAPI
 from .qqmusic import QQMusic
+from .soda import SodaMusic
 from .txqq import TXQQMusic
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "TXQQMusic",
     "NekoMusic",
     "AppleMusic",
+    "SodaMusic",
 ]

@@ -250,6 +250,66 @@
                     }
                 }
             },
+            "kuwo": {
+                "name": "酷我音乐",
+                "items": {
+                    "priority": {
+                        "description": "优先级",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
+                        "type": "int",
+                        "slider": {
+                            "min": 1,
+                            "max": 100,
+                            "step": 1
+                        },
+                        "default": 15
+                    },
+                    "enable": {
+                        "description": "启用此音源",
+                        "hint": "关闭后此音源不会参与命令匹配或搜索。",
+                        "type": "bool",
+                        "default": true
+                    },
+                    "trigger_words": {
+                        "description": "触发词",
+                        "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
+                        "type": "list",
+                        "default": [
+                            "酷我点歌"
+                        ]
+                    },
+                    "quality": {
+                        "description": "文件音质",
+                        "hint": "仅文件模式使用此音质；语音模式固定使用标准音质。高音质不可用时会自动回退。MFLAC 解密需要安装 nonebot-plugin-kuwo Rust 扩展。",
+                        "type": "string",
+                        "options": [
+                            "standard",
+                            "exhigh",
+                            "lossless",
+                            "hires",
+                            "hifi",
+                            "sur",
+                            "jymaster"
+                        ],
+                        "labels": [
+                            "标准（128K MP3）",
+                            "较高（320K MP3）",
+                            "无损（2000K FLAC）",
+                            "Hi-Res（4000K FLAC）",
+                            "HiFi（20201K MFLAC）",
+                            "环绕声（20501K MFLAC）",
+                            "母带（20900K MFLAC）"
+                        ],
+                        "default": "lossless"
+                    },
+                    "proxy": {
+                        "description": "代理地址",
+                        "hint": "此地址用于酷我搜索、详情和歌曲直链请求；留空表示直连。示例：http://127.0.0.1:7890。",
+                        "type": "string",
+                        "default": ""
+                    }
+                }
+            },
             "qqmusic": {
                 "name": "QQ 音乐",
                 "items": {
@@ -384,12 +444,12 @@
                     }
                 }
             },
-            "kuwo": {
-                "name": "酷我音乐",
+            "soda": {
+                "name": "汽水音乐",
                 "items": {
                     "priority": {
                         "description": "优先级",
-                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。重复优先级会自动调整，音源配置按优先级排序。",
+                        "hint": "数值越小越优先；未指定平台的“点歌”会按优先级依次回退。",
                         "type": "int",
                         "slider": {
                             "min": 1,
@@ -406,39 +466,15 @@
                     },
                     "trigger_words": {
                         "description": "触发词",
-                        "hint": "输入该音源的点歌触发词，支持定义多个触发词。",
+                        "hint": "汽水音乐音源的点歌触发词。",
                         "type": "list",
                         "default": [
-                            "酷我点歌"
+                            "汽水点歌"
                         ]
-                    },
-                    "quality": {
-                        "description": "文件音质",
-                        "hint": "仅文件模式使用此音质；语音模式固定使用标准音质。高音质不可用时会自动回退。MFLAC 解密需要安装 nonebot-plugin-kuwo Rust 扩展。",
-                        "type": "string",
-                        "options": [
-                            "standard",
-                            "exhigh",
-                            "lossless",
-                            "hires",
-                            "hifi",
-                            "sur",
-                            "jymaster"
-                        ],
-                        "labels": [
-                            "标准（128K MP3）",
-                            "较高（320K MP3）",
-                            "无损（2000K FLAC）",
-                            "Hi-Res（4000K FLAC）",
-                            "HiFi（20201K MFLAC）",
-                            "环绕声（20501K MFLAC）",
-                            "母带（20900K MFLAC）"
-                        ],
-                        "default": "lossless"
                     },
                     "proxy": {
                         "description": "代理地址",
-                        "hint": "此地址用于酷我搜索、详情和歌曲直链请求；留空表示直连。示例：http://127.0.0.1:7890。",
+                        "hint": "此地址仅用于该音源的网络请求；留空表示直连。",
                         "type": "string",
                         "default": ""
                     }
@@ -618,10 +654,6 @@
                         "default": ""
                     }
                 }
-            },
-            "netease_nodejs": {
-                "name": "已废弃音源",
-                "items": {}
             }
         }
     }
