@@ -2,6 +2,7 @@ import asyncio
 import re
 import secrets
 import string
+from pathlib import Path
 from typing import ClassVar
 from urllib.parse import urlencode
 
@@ -27,6 +28,15 @@ class KuwoMusic(BaseMusicPlayer):
     DETAIL_API_URL = DETAIL_URL
     TRACK_SOURCE = "kwplayer_ar_8.5.5.0_keluze.apk"
     TRACK_BITRATE = "128kmp3"
+    QUALITY_TO_BITRATE: ClassVar[dict[str, str]] = {
+        "standard": "128kmp3",
+        "exhigh": "320kmp3",
+        "lossless": "2000kflac",
+        "hires": "4000kflac",
+        "hifi": "20201kmflac",
+        "sur": "20501kmflac",
+        "jymaster": "20900kmflac",
+    }
     TRACK_USER_ALPHABET = string.ascii_lowercase + string.digits
     TRACK_USER_LENGTH = 16
     COVER_BASE_URL = "http://img1.kwcdn.kuwo.cn/star/albumcover/"
@@ -223,6 +233,114 @@ class KuwoMusic(BaseMusicPlayer):
                     except (TypeError, ValueError):
                         pass
         return song
+
+    async def download_audio_for_file(self, song: Song) -> Path | None:
+        """Download configured Kuwo quality, falling back to standard audio.
+
+        Args:
+            song: Song with a standard-quality fallback URL.
+
+        Returns:
+            Path to the requested or fallback audio file, or None if both
+            downloads fail.
+        """
+        configured_quality = getattr(self.platform_cfg, "quality", None)
+        quality = (
+            configured_quality.strip().lower()
+            if isinstance(configured_quality, str)
+            else "lossless"
+        )
+        bitrate = self.QUALITY_TO_BITRATE.get(quality, self.TRACK_BITRATE)
+        if bitrate != self.TRACK_BITRATE and song.id:
+            track_params = {
+                "f": "web",
+                "source": self.TRACK_SOURCE,
+                "type": "convert_url_with_sign",
+                "rid": song.id,
+                "br": bitrate,
+                "user": "".join(
+                    secrets.choice(self.TRACK_USER_ALPHABET)
+                    for _ in range(self.TRACK_USER_LENGTH)
+                ),
+            }
+            try:
+                track_result = await self._request(
+                    f"{self.TRACK_URL}?{urlencode(track_params)}"
+                )
+            except Exception as exc:
+                logger.warning(
+                    f"Kuwo {quality} quality request failed, falling back: {exc}"
+                )
+            else:
+                track_data = (
+                    track_result.get("data")
+                    if isinstance(track_result, dict)
+                    and str(track_result.get("code")) == "200"
+                    else None
+                )
+                high_url = (
+                    track_data.get("url") if isinstance(track_data, dict) else None
+                )
+                audio_format = (
+                    str(track_data.get("format", "")).strip().lower()
+                    if isinstance(track_data, dict)
+                    else ""
+                )
+                ekey = track_data.get("ekey") if isinstance(track_data, dict) else None
+                clean_high_url = (
+                    high_url.split("?", 1)[0]
+                    if isinstance(high_url, str) and high_url
+                    else ""
+                )
+                is_mflac = (
+                    audio_format == "mflac"
+                    or Path(clean_high_url).suffix.lower() == ".mflac"
+                )
+                if clean_high_url and (not is_mflac or (isinstance(ekey, str) and ekey)):
+                    try:
+                        file_path = await self.download_audio(clean_high_url)
+                    except Exception as exc:
+                        logger.warning(
+                            f"Kuwo {quality} quality download failed, falling back: {exc}"
+                        )
+                    else:
+                        if file_path:
+                            if is_mflac:
+                                decrypted_path = file_path.with_suffix(".flac")
+                                try:
+                                    from nonebot_plugin_kuwo.qmc import (
+                                        decrypt_mflac_file,
+                                    )
+
+                                    await asyncio.to_thread(
+                                        decrypt_mflac_file,
+                                        file_path,
+                                        decrypted_path,
+                                        ekey,
+                                    )
+                                    if (
+                                        decrypted_path.is_file()
+                                        and decrypted_path.stat().st_size > 0
+                                    ):
+                                        file_path.unlink(missing_ok=True)
+                                        return decrypted_path
+                                except Exception as exc:
+                                    logger.warning(
+                                        "Kuwo MFLAC decrypt failed, falling back: "
+                                        f"{exc}"
+                                    )
+                                    decrypted_path.unlink(missing_ok=True)
+                                file_path.unlink(missing_ok=True)
+                            else:
+                                return file_path
+                logger.warning(
+                    f"Kuwo {quality} quality unavailable for {song.id}, "
+                    "falling back to standard quality"
+                )
+
+        if song.audio_url:
+            return await self.download_audio(song.audio_url)
+        return None
 
     async def fetch_lyrics(self, song: Song) -> Song:
         """Fetch LRC lyrics from Kuwo's lyrics endpoint.

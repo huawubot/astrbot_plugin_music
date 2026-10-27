@@ -3,6 +3,7 @@ import uuid
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import ClassVar
+from urllib.parse import urlparse
 
 import aiofiles
 import aiohttp
@@ -169,7 +170,19 @@ class BaseMusicPlayer(ABC):
             Path to the downloaded file, or None if the download fails.
         """
         self.cfg.temp_dir.mkdir(parents=True, exist_ok=True)
-        file_path = self.cfg.temp_dir / f"{uuid.uuid4().hex}.mp3"
+        suffix = Path(urlparse(url).path).suffix.lower()
+        if suffix not in {
+            ".mp3",
+            ".flac",
+            ".mflac",
+            ".m4a",
+            ".aac",
+            ".ogg",
+            ".opus",
+            ".wav",
+        }:
+            suffix = ".mp3"
+        file_path = self.cfg.temp_dir / f"{uuid.uuid4().hex}{suffix}"
         try:
             async with self._get_session().get(
                 url, proxy=self.platform_cfg.proxy or None
@@ -186,6 +199,20 @@ class BaseMusicPlayer(ABC):
             file_path.unlink(missing_ok=True)
             logger.error(f"歌曲下载失败，错误信息：{e}")
             return None
+
+    async def download_audio_for_file(self, song: Song) -> Path | None:
+        """Download audio for file-mode sending.
+
+        Args:
+            song: Song whose resolved audio URL should be downloaded.
+
+        Returns:
+            Path to the downloaded file, or None if the song has no URL or
+            downloading fails.
+        """
+        if not song.audio_url:
+            return None
+        return await self.download_audio(song.audio_url)
 
 
     async def close(self):
