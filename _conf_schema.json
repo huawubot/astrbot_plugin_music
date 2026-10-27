@@ -594,8 +594,7 @@
                         "default": ""
                     }
                 }
-            }
-            ,
+            },
             "netease_nodejs": {
                 "name": "已移除的网易云音乐音源（自动清理）",
                 "items": {}
