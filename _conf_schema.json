@@ -68,10 +68,9 @@
         "items": {
             "send_modes": {
                 "description": "发送模式",
-                "hint": "按列表顺序尝试发送方式，失败时自动尝试下一种。卡片和签名卡片目前仅支持 aiocqhttp。",
+                "hint": "按列表顺序尝试发送方式，失败时自动尝试下一种。签名卡片目前仅支持 aiocqhttp。",
                 "type": "list",
                 "options": [
-                    "card(卡片模式)",
                     "ark_card(签名卡片)",
                     "record_link(语音链接)",
                     "record_local(本地语音)",
@@ -80,7 +79,6 @@
                     "text(文本模式)"
                 ],
                 "default": [
-                    "card(卡片模式)",
                     "ark_card(签名卡片)",
                     "record_local(本地语音)",
                     "record_link(语音链接)",
@@ -340,7 +338,7 @@
                     },
                     "uin": {
                         "description": "绑定 QQ 号",
-                        "hint": "必填。填写 QQ 音乐绿钻绑定的 QQ 号，用于搜索接口鉴权；未填写时该音源不会返回搜索结果。",
+                        "hint": "必填。填写用于 QQ 音乐搜索的 QQ 号，不要求绿钻会员；未填写时该音源不会返回搜索结果。",
                         "type": "string",
                         "default": "10001"
                     },
@@ -349,6 +347,12 @@
                         "hint": "选填。可填写网页端 QQ 音乐 Cookie；仅包含有效 qqmusic_key 或 qm_keyst 的 Cookie 会被发送。",
                         "type": "text",
                         "default": ""
+                    },
+                    "enable_xiaobai_fallback": {
+                        "description": "启用小白备用音源",
+                        "hint": "官方音频获取失败或校验不通过时，按同一首 QQ 歌曲的 ID 尝试小白音乐。无需向备用源提供 QQ 登录态；完整音频可用性取决于上游。",
+                        "type": "bool",
+                        "default": true
                     },
                     "proxy": {
                         "description": "代理地址",
