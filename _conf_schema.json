@@ -68,9 +68,10 @@
         "items": {
             "send_modes": {
                 "description": "发送模式",
-                "hint": "按列表顺序尝试发送方式，失败时自动尝试下一种。签名卡片目前仅支持 aiocqhttp。",
+                "hint": "按列表顺序尝试发送方式，失败时自动尝试下一种",
                 "type": "list",
                 "options": [
+                    "card(卡片模式)",
                     "ark_card(签名卡片)",
                     "record_link(语音链接)",
                     "record_local(本地语音)",
